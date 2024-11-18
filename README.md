@@ -16,11 +16,12 @@
     ```
     npm install
     ```
-**Note: Remember to navigate to the correct path**  
+    **Note: Remember to navigate to the correct path**
+  
 3. Run the following command to start the application: 
     ```
     npm start
     ```
-**Note: For more detail instructions, please refer to the README file in the 'client' folder.**
+    **Note: For more detail instructions, please refer to the README file in the 'client' folder.**
 
 
