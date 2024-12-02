@@ -6,17 +6,22 @@ import {Routes, Route, Navigate} from "react-router-dom"
 import Login from './components/login';
 import Home from './components/home';
 import Signup from './components/signup';
+import AboutUs from './components/AboutUs';
+import home from './components/home';
+import Contact from './components/Contact';
+
+
 function App() {
   const {user} =useAuth();
   return (
-    
-        <Routes>
-            <Route path="/" element={user ? <Home/> : <Login/>}/> 
-            <Route path="/login" element ={user ? <Home/> : <Login/>}/>
-            <Route path="/signUp" element ={<Signup/>}/>
-        </Routes>
-    
+    <div>
+
+        <AboutUs.js/>
+        <home.js/>
+        <Contact.js/>
+    </div>
   );
 }
+
 
 export default App;
