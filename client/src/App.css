@@ -36,3 +36,327 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background: #00ff00;
+  background: url('./assets/img/login6.webp') no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.form-box{
+  position: relative;
+  width: 400px;
+  height: 515px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.form-box.register-box{
+  position: relative;
+  width: 400px;
+  height: 540px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h2{
+  font-size: 2em;
+  color:#fff;
+  text-align: center;
+}
+
+.inputbox{
+  position: relative;
+  margin:30px 0;
+  width: 310px;
+  border-bottom: 2px solid #FFD700;
+}
+
+.inputbox label{
+  position: absolute;
+  top:50%;
+  left: 5px;
+  transform: translateY(-50%);
+  color: #fff;
+  font-size: 1em;
+  pointer-events: none;
+  transition: top 0.3s ease, font-size 0.3s ease;
+}
+input:focus ~ label,
+input:valid ~ label{
+  top: -5px;
+  font-size: .9em;
+}
+.inputbox input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1em;
+  padding:0 35px 0 5px;
+  color: #fff;
+
+}
+
+.inputbox ion-icon{
+  position: absolute;
+  right: 8px;
+  color: #fff;
+  top: 20px; 
+}
+
+.forget{
+  margin: -15px 0 15px;
+  font-size: .9em;
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
+button{
+  width: 100%;
+  height: 40px;
+  border-radius: 40px;
+  background: #fff;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.register{
+  font-size: .9em;
+  color: #fff;
+  margin: 25px 0 10px;
+}
+
+.register p a{
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+}
+.register p a:hover{
+  text-decoration: underline;
+}
+
+
+.remember-me {
+  display: flex;
+  color: #fff;
+  margin-top: 20px;
+}
+
+.remember-me input[type="checkbox"] {
+  
+  width: 18px;
+  height: 20px;
+  margin-right: 10px;
+  accent-color: #ffaf40; /* change checkbox color */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.remember-me input[type="checkbox"]:checked {
+  transform: scale(1.2); /* add a scaling effect */
+}
+
+.remember-me span {
+  font-size: 1.1em;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.remember-me span:hover {
+  color: #ffaf40; /* change when hovering */
+}
+
+
+.line-with-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.line {
+  flex: 1;
+  height: 2px;
+  background-color: #ffaf40; /* Màu của đường kẻ */
+  margin: 0 10px; /* Khoảng cách giữa các đường kẻ */
+  position:relative;
+}
+
+.text {
+  font-size: 1.2em;
+  color: #fff; /* Màu của chữ */
+  padding: 0 10px; /* Khoảng cách giữa chữ và đường kẻ */
+}
+
+.line::before, .line::after {
+  content: ''; 
+  position: absolute;
+  bottom: 1px;
+  width: 8px; /* the width of diamond */
+  height: 8px; /* the height of diamond */
+  background-color: #ffaf40; /* the color of the diamond*/
+  transform: rotate(45deg); /* rotate the square into the diamond */
+}
+/* the diamond in the right */
+.line::before {
+  left: -8px; /* align the diamond to the left and right */
+  top: -3px; /* align the diamond to the top and bottom*/
+
+}
+/* the diamond in the right */
+.line::after {
+  right: -7px; /* align the diamond to the left and right */
+  top: -3px; /* align the diamond to the top and bottom*/
+}
+
+.forgot-password{
+  margin-top: 20px;
+  font-size: 1.1em;
+  
+}
+
+.google-button{
+  position: relative;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.google-button img{
+  position: absolute;
+  width: 30px;
+  left: 13px;
+}
+
+
+
+
+
+
+
+
+
+/* test about us */
+
+
+/* General Reset */
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
+
+/* Body Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* Main Container */
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* About Header */
+.about-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.about-header h1 {
+  font-size: 48px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.about-header p {
+  font-size: 20px;
+  color: #7f8c8d;
+}
+
+/* About Info Section */
+.about-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.about-info .about-image img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.about-info .about-text {
+  width: 60%;
+  padding-left: 30px;
+}
+
+.about-info h2 {
+  font-size: 32px;
+  color: #34495e;
+  margin-bottom: 20px;
+}
+
+.about-info p {
+  font-size: 18px;
+  color: #7f8c8d;
+  line-height: 1.8;
+}
+
+/* Vision Section */
+.about-vision {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.about-vision h2 {
+  font-size: 32px;
+  color: #34495e;
+  margin-bottom: 20px;
+}
+
+.about-vision p {
+  font-size: 18px;
+  color: #7f8c8d;
+  line-height: 1.8;
+}
