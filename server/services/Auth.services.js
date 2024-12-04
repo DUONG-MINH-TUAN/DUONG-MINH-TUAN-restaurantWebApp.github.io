@@ -1,19 +1,33 @@
-const prisma = require('../Models/prisma.model');
+const prisma = require('../Models/User.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const SECRET_KEY = process.env.SECRET_KEY;
+const REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY;
 
 //create access token 
-const generateAccessToken = (user) => {
-    return jwt.sign({id:user.id},process.env.JWT_SECRET_KEY,{expiresIn:'15m'});
+exports.generateAccessToken = (user) => {
+    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'15m'});
 }
 
+// API yêu cầu refresh token
+exports.reloadAccessToken = async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) return res.status(401).json({ message: 'Not authenticated' });
+
+    jwt.verify(refreshToken, REFRESH_SECRET_KEY, (err, user) => {
+        if (err) return res.status(403).json({ message: 'Invalid refresh token' });
+
+        const newAccessToken = this.generateAccessToken(user);
+        res.json({ accessToken: newAccessToken });
+    });
+};
 //create refresh token
-const generateRefreshToken = (user) => {
-    return jwt.sign({id:user.id},);
+exports.generateRefreshToken = (user) => {
+    return jwt.sign({id:user.id},REFRESH_SECRET_KEY,{expiresIn:'7d'});
 }
+
 
 // Middleware để xác thực token
 exports.authenticate = (req, res, next) => {
@@ -30,5 +44,6 @@ exports.authenticate = (req, res, next) => {
     next();
   });
 };
+
 
 

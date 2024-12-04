@@ -1,16 +1,23 @@
 import React from 'react';
 import { useAuth } from "../context/AuthContext";
 import logoGoogle from '../assets/img/logo-google-2.svg';
-import Login from './login';
 import { Link } from 'react-router-dom';
 function SignUp() {
   const {updateRegisterInfor,registerInfor, isRegisterLoading,registerUser,registerError} = useAuth(); 
-    
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    // Kiểm tra password và confirmed password có khớp không
+  if (password !== confirmedPassword) {
+    setError("Passwords do not match!");
+    return;
+  }
+    await registerUser();
+};
   return (
         <section>
         <div className="form-box register-box">
             <div className="form-value">
-                <form onSubmit={registerUser}>
+                <form onSubmit={handleSignUp}>
                     <h2>Sign Up</h2>
                     <div className="inputbox">
                         <ion-icon name="mail-outline"></ion-icon>
@@ -44,7 +51,9 @@ function SignUp() {
                         <label htmlFor="">Confirmed Password</label>
                     </div>
                     <button type='submit'>Sign Up</button>
-                    
+                    {loginError?.error && <alert><p>
+                        {loginError.message}
+                        </p></alert>}
                     {/* <!-- create two lines and one word between them --> */}
                     <div className="line-with-text"> 
                         <span className="line"></span>

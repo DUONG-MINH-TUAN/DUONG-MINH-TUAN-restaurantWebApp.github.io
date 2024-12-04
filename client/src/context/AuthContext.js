@@ -1,10 +1,9 @@
 import {createContext,useState,useCallback, useEffect, useContext} from "react";
 import {baseUrl,postRequest} from '../services/requestManager';
-
+import axios from 'axios';
 const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
-    
+export const AuthProvider = ({children}) => { 
     const [loginInfor,setLoginInfor] = useState({
         email: "",
         password: ""
@@ -19,6 +18,8 @@ export const AuthProvider = ({children}) => {
     });
     const [isRegisterLoading,setIsRegisterLoading]= useState(false);
     const [registerError,setRegisterError] = useState(null);
+    const [isAuthenticated,setIsAuthenticated]=useState(false);
+
     const updateLoginInfor = (infor) => {
         setLoginInfor(infor);
     }
@@ -29,29 +30,38 @@ export const AuthProvider = ({children}) => {
         e.preventDefault();
         setIsRegisterLoading(true);
         setRegisterError(null);
-        const response = await postRequest(`${baseUrl}/users/register`, JSON.stringify(registerInfor));
+        const response = await postRequest(`${baseUrl}/register`, registerInfor);
         setIsRegisterLoading(false);
         if (response.error){
             return setRegisterError(response);
         }
-        localStorage.setItem("User", JSON.stringify(response));
         setUser(response);
     },[registerInfor]);
-    
+
+    // function to create new access token 
+    const refreshAccessToken = async () => {
+        try {
+            const response = await axios.post(`${baseUrl}/refresh`);
+            localStorage.setItem('accessToken', response.data.accessToken);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const logout = useCallback(() => {
-        localStorage.removeItem("User");
-        setUser(null);
+        localStorage.removeItem("accessToken");
+        axios.post(`${baseUrl}/logout`);
     },[])
     const login = useCallback(async(e)=>{
         e.preventDefault();
         setIsLoginLoading(true);
         setLoginError(null);
-        const response = await postRequest(`${baseUrl}/users/login`, 
-        JSON.stringify(loginInfor)); //json 
+        const response = await axios.post(`${baseUrl}/login`, 
+        loginInfor); //json 
         if(response.error){
             return setLoginError(response);
         }
-        localStorage.setItem("User", JSON.stringify(response));
+        localStorage.setItem("accessToken", response.data.accessToken);
         setUser(response);
         setIsLoginLoading(false);
     },[loginInfor])
@@ -70,7 +80,9 @@ export const AuthProvider = ({children}) => {
         registerError,
         registerInfor,
         isRegisterLoading,
-        updateRegisterInfor,}}>
+        updateRegisterInfor,
+        setIsAuthenticated,
+        isAuthenticated,}}>
         {children}
         </AuthContext.Provider>
     )

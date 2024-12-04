@@ -5,12 +5,15 @@ import SignUp from './signup';
 import { Link } from 'react-router-dom';
 function Login() {
   const {updateLoginInfor,loginInfor, isLoginLoading,login,loginError} = useAuth(); 
-    
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    await login();
+};
   return (
     <section>
       <div className="form-box">
         <div className="form-value">
-          <form onSubmit={login}>
+          <form onSubmit={handleLogin}>
             <h2>Login</h2>
             <div className="inputbox">
               <ion-icon name="mail-outline"></ion-icon>

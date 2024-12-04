@@ -70,3 +70,11 @@ CREATE TABLE Category_Promotion (
     FOREIGN KEY (Promotion_ID) REFERENCES Promotion(ID) ON DELETE CASCADE,
     FOREIGN KEY (Category_ID) REFERENCES Category(ID) ON DELETE CASCADE
 );
+
+
+create table userinfor(
+id int AUTO_INCREMENT PRIMARY KEY,
+name varchar(25) not null,
+email varchar(100) unique not null,
+password 
+)

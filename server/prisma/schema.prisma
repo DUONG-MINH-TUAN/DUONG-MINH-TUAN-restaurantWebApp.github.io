@@ -82,3 +82,9 @@ model tableinfo {
   Total   Decimal?  @db.Decimal(10, 2)
   cart    cart[]
 }
+
+model userinfor {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(25)
+  email String @unique(map: "unique_email") @db.VarChar(100)
+}
