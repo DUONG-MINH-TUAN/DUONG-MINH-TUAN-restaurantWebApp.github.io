@@ -7,9 +7,78 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id       Int    @id @default(autoincrement())
-  username String @unique(map: "username") @db.VarChar(255)
-  password String @db.VarChar(255)
-  email    String @unique(map: "email") @db.VarChar(255)
+model cart {
+  ID        Int       @id @default(autoincrement())
+  Table_ID  Int
+  Disk_ID   Int
+  Quantity  Int
+  tableinfo tableinfo @relation(fields: [Table_ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "cart_ibfk_1")
+  disk      disk      @relation(fields: [Disk_ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "cart_ibfk_2")
+
+  @@index([Disk_ID], map: "Disk_ID")
+  @@index([Table_ID], map: "Table_ID")
+}
+
+model category {
+  ID                 Int                  @id @default(autoincrement())
+  Name               String               @db.VarChar(100)
+  category_promotion category_promotion[]
+  disk               disk[]
+}
+
+model category_promotion {
+  Promotion_ID Int
+  Category_ID  Int
+  promotion    promotion @relation(fields: [Promotion_ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "category_promotion_ibfk_1")
+  category     category  @relation(fields: [Category_ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "category_promotion_ibfk_2")
+
+  @@id([Promotion_ID, Category_ID])
+  @@index([Category_ID], map: "Category_ID")
+}
+
+model disk {
+  ID          Int         @id @default(autoincrement())
+  Name        String      @db.VarChar(100)
+  Type        String?     @db.VarChar(50)
+  Cost        Decimal?    @db.Decimal(10, 2)
+  Category_ID Int?
+  cart        cart[]
+  category    category?   @relation(fields: [Category_ID], references: [ID], onUpdate: NoAction, map: "disk_ibfk_1")
+  disk_item   disk_item[]
+
+  @@index([Category_ID], map: "Category_ID")
+}
+
+model disk_item {
+  ID           Int     @id @default(autoincrement())
+  Disk_ID      Int
+  Relationship String? @db.VarChar(100)
+  Comment      String? @db.Text
+  disk         disk    @relation(fields: [Disk_ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "disk_item_ibfk_1")
+
+  @@index([Disk_ID], map: "Disk_ID")
+}
+
+model payment {
+  ID     Int      @id @default(autoincrement())
+  Type   String   @db.VarChar(50)
+  Time   DateTime @db.DateTime(0)
+  Amount Decimal? @db.Decimal(10, 2)
+}
+
+model promotion {
+  ID                 Int                  @id @default(autoincrement())
+  StartDate          DateTime             @db.Date
+  Due_Date           DateTime             @db.Date
+  Rate               Decimal              @db.Decimal(5, 2)
+  category_promotion category_promotion[]
+}
+
+model tableinfo {
+  ID      Int       @id @default(autoincrement())
+  Name    String    @db.VarChar(100)
+  StartAt DateTime? @db.DateTime(0)
+  EndAt   DateTime? @db.DateTime(0)
+  Total   Decimal?  @db.Decimal(10, 2)
+  cart    cart[]
 }
