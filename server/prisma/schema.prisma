@@ -84,7 +84,8 @@ model tableinfo {
 }
 
 model userinfor {
-  id    Int    @id @default(autoincrement())
-  name  String @db.VarChar(25)
-  email String @unique(map: "unique_email") @db.VarChar(100)
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(25)
+  email    String @unique(map: "unique_email") @db.VarChar(100)
+  password String @db.VarChar(100)
 }

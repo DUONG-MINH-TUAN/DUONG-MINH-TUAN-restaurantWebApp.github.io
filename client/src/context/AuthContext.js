@@ -1,5 +1,5 @@
 import {createContext,useState,useCallback, useEffect, useContext} from "react";
-import {baseUrl,postRequest} from '../services/requestManager';
+import {baseUrl} from '../services/requestManager';
 import axios from 'axios';
 const AuthContext = createContext();
 
@@ -26,16 +26,21 @@ export const AuthProvider = ({children}) => {
     const updateRegisterInfor = (infor) => {
         setRegisterInfor(infor);
     }
-    const registerUser = useCallback(async(e) => {
-        e.preventDefault();
+    const registerUser = useCallback(async() => {
+        try{
+        
         setIsRegisterLoading(true);
         setRegisterError(null);
-        const response = await postRequest(`${baseUrl}/register`, registerInfor);
+        const response = await axios.post(`${baseUrl}/signup`, registerInfor);
         setIsRegisterLoading(false);
-        if (response.error){
-            return setRegisterError(response);
-        }
+        
         setUser(response);
+        } catch(error){
+            const errorMessage = error.response?.data?.message || error.message;
+            setRegisterError(errorMessage);
+            setIsRegisterLoading(false);
+            return ;
+        }
     },[registerInfor]);
 
     // function to create new access token 
@@ -52,18 +57,25 @@ export const AuthProvider = ({children}) => {
         localStorage.removeItem("accessToken");
         axios.post(`${baseUrl}/logout`);
     },[])
-    const login = useCallback(async(e)=>{
-        e.preventDefault();
+    const login = useCallback(async()=>{
+        
+        try{
         setIsLoginLoading(true);
         setLoginError(null);
         const response = await axios.post(`${baseUrl}/login`, 
         loginInfor); //json 
-        if(response.error){
-            return setLoginError(response);
-        }
+        // if(response.error){
+        //     return setLoginError(response);
+        // }
         localStorage.setItem("accessToken", response.data.accessToken);
         setUser(response);
         setIsLoginLoading(false);
+    }catch(error){
+        const errorMessage = error.response?.data?.message || error.message;
+        setLoginError(errorMessage);
+        setIsLoginLoading(false);
+        return ;
+    }
     },[loginInfor])
 
     
@@ -82,7 +94,8 @@ export const AuthProvider = ({children}) => {
         isRegisterLoading,
         updateRegisterInfor,
         setIsAuthenticated,
-        isAuthenticated,}}>
+        isAuthenticated,
+        setRegisterError,}}>
         {children}
         </AuthContext.Provider>
     )

@@ -14,7 +14,7 @@ exports.generateAccessToken = (user) => {
 // API yêu cầu refresh token
 exports.reloadAccessToken = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) return res.status(401).json({ message: 'Not authenticated' });
+    if (!refreshToken) return res.status(401).json({ message: 'No refresh token found, please login again!!!' });
 
     jwt.verify(refreshToken, REFRESH_SECRET_KEY, (err, user) => {
         if (err) return res.status(403).json({ message: 'Invalid refresh token' });

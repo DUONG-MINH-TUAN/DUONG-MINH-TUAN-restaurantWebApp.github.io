@@ -76,5 +76,5 @@ create table userinfor(
 id int AUTO_INCREMENT PRIMARY KEY,
 name varchar(25) not null,
 email varchar(100) unique not null,
-password 
+password varchar(25) not null
 )

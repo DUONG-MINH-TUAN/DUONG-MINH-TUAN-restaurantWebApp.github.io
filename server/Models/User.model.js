@@ -13,7 +13,9 @@ async function findUserByEmail(email) {
         });
         return user;
     } catch (error) {
+        // console.error("Error in finding email: ", error);
         console.error("Error in finding email: ", error);
+        throw error;
     } finally {
         // Đảm bảo đóng kết nối Prisma Client sau khi sử dụng
         await prisma.$disconnect();

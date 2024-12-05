@@ -1,6 +1,12 @@
 const bcrypt = require('bcryptjs');
 const { findUserByEmail, createUser } = require('../Models/User.model');
 const {generateAccessToken,generateRefreshToken} = require('./Auth.services');
+const COOKIE_OPTIONS = {
+    httpOnly: true, // Ngăn chặn truy cập bằng JavaScript
+    // secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS
+    sameSite: 'Strict', // Giới hạn cookie không thể được gửi qua các yêu cầu cross-site
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  };
 
 // sign up
 exports.signup = async (req, res) => {
@@ -40,20 +46,17 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        // compare the password
+        // check the password validity
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Incorrect password' });
         }
+
         //create two tokens
         const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user);
         
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS trong môi trường production
-            sameSite: 'Strict', // Ngăn chặn CSRF
-        });
+        res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
     
         res.json({ accessToken });
 

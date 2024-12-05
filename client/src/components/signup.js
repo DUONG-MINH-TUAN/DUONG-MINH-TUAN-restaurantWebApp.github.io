@@ -3,14 +3,19 @@ import { useAuth } from "../context/AuthContext";
 import logoGoogle from '../assets/img/logo-google-2.svg';
 import { Link } from 'react-router-dom';
 function SignUp() {
-  const {updateRegisterInfor,registerInfor, isRegisterLoading,registerUser,registerError} = useAuth(); 
+  const { updateRegisterInfor,
+          registerInfor, 
+          isRegisterLoading,
+          registerUser,
+          registerError,
+          setRegisterError} = useAuth(); 
   const handleSignUp = async (e) => {
-    e.preventDefault();
+    
     // Kiểm tra password và confirmed password có khớp không
-  if (password !== confirmedPassword) {
-    setError("Passwords do not match!");
-    return;
-  }
+    if (registerInfor.password !== registerInfor.confirmedPassword) {
+      setRegisterError("Passwords do not match!");
+      return;
+    }
     await registerUser();
 };
   return (
@@ -43,17 +48,25 @@ function SignUp() {
                     <div className="inputbox">
                         <ion-icon name="lock-closed-outline"></ion-icon>
                         <input 
-                            type="confirmedPassword"
+                            type="password"
                             value={registerInfor.confirmedPassword}
                             onChange={(e)=>updateRegisterInfor({...registerInfor,confirmedPassword: e.target.value})} 
                             required
                         />
                         <label htmlFor="">Confirmed Password</label>
                     </div>
-                    <button type='submit'>Sign Up</button>
-                    {loginError?.error && <alert><p>
-                        {loginError.message}
-                        </p></alert>}
+                    <button type="submit">Sign Up</button>
+
+                    {/* alert controller */}
+                    <div>
+                    {registerError && (
+                      <div className="alert alert-danger"> {/* Thêm class CSS tùy ý */}
+                        <p>{registerError}</p>
+                      </div>
+                        )}
+                       
+                    </div>
+
                     {/* <!-- create two lines and one word between them --> */}
                     <div className="line-with-text"> 
                         <span className="line"></span>

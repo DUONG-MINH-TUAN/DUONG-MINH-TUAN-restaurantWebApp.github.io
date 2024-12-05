@@ -66,7 +66,7 @@ section {
 .form-box.register-box{
   position: relative;
   width: 400px;
-  height: 540px;
+  height: 600px;
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.5);
   border-radius: 20px;
@@ -260,103 +260,39 @@ button{
 
 
 
+/* alert dialog in the login page */
 
-
-
-
-
-
-/* test about us */
-
-
-/* General Reset */
-/* * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-} */
-
-/* Body Styles */
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f4f4;
-  color: #333;
-  line-height: 1.6;
-  padding: 20px;
-}
-
-/* Main Container */
-.about-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-/* About Header */
-.about-header {
+/* Style chung cho thông báo lỗi */
+.alert {
+  /* padding: 5px;
+  margin: 5px 0; */
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
   text-align: center;
-  margin-bottom: 40px;
+  opacity: 0; /* Đặt mặc định là ẩn */
+  animation: fadeIn 0.5s forwards;
 }
 
-.about-header h1 {
-  font-size: 48px;
-  color: #2c3e50;
-  margin-bottom: 10px;
+/* Cảnh báo lỗi - màu đỏ */
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
-.about-header p {
-  font-size: 20px;
-  color: #7f8c8d;
+/* Hiệu ứng fade in khi thông báo xuất hiện */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
-/* About Info Section */
-.about-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 40px;
-}
-
-.about-info .about-image img {
-  width: 100%;
-  max-width: 300px;
-  height: auto;
-  border-radius: 8px;
-}
-
-.about-info .about-text {
-  width: 60%;
-  padding-left: 30px;
-}
-
-.about-info h2 {
-  font-size: 32px;
-  color: #34495e;
-  margin-bottom: 20px;
-}
-
-.about-info p {
-  font-size: 18px;
-  color: #7f8c8d;
-  line-height: 1.8;
-}
-
-/* Vision Section */
-.about-vision {
-  margin-top: 40px;
-  text-align: center;
-}
-
-.about-vision h2 {
-  font-size: 32px;
-  color: #34495e;
-  margin-bottom: 20px;
-}
-
-.about-vision p {
-  font-size: 18px;
-  color: #7f8c8d;
-  line-height: 1.8;
+/* Hiệu ứng hover để làm nổi bật cảnh báo */
+.alert-danger:hover {
+  background-color: #f5c6cb;
+  border-color: #f1a7b2;
 }
