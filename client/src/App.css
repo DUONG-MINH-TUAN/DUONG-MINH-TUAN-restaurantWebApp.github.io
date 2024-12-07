@@ -54,7 +54,7 @@ section {
 .form-box{
   position: relative;
   width: 400px;
-  height: 515px;
+  height: 540px;
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.5);
   border-radius: 20px;
@@ -100,9 +100,13 @@ h2{
   transition: top 0.3s ease, font-size 0.3s ease;
 }
 input:focus ~ label,
-input:valid ~ label{
+input:not(:placeholder-shown) ~ label{
   top: -5px;
   font-size: .9em;
+}
+.inputbox input:not(:focus):not(:valid) ~ label {
+  top: 50%;
+  font-size: 1em;
 }
 .inputbox input {
   width: 100%;
@@ -264,8 +268,8 @@ button{
 
 /* Style chung cho thông báo lỗi */
 .alert {
-  /* padding: 5px;
-  margin: 5px 0; */
+  padding: 5px;
+  margin: 20px 0;
   border-radius: 5px;
   font-size: 16px;
   font-weight: bold;

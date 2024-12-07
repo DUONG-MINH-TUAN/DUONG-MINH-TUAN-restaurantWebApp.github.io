@@ -11,12 +11,11 @@ function SignUp() {
           setRegisterError} = useAuth(); 
   const handleSignUp = async (e) => {
     
-    // Kiểm tra password và confirmed password có khớp không
-    if (registerInfor.password !== registerInfor.confirmedPassword) {
-      setRegisterError("Passwords do not match!");
-      return;
+    try{
+    await registerUser();}
+    catch(error){
+      console.error('Error: ', error);
     }
-    await registerUser();
 };
   return (
         <section>

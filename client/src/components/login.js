@@ -1,21 +1,23 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { useAuth } from "../context/AuthContext";
 import logoGoogle from '../assets/img/logo-google-2.svg';
 import SignUp from './signup';
 import { Link } from 'react-router-dom';
 function Login() {
   const {updateLoginInfor,loginInfor, isLoginLoading,login,loginError} = useAuth(); 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
       // Giả sử bạn gọi API hoặc thực hiện hành động bất đồng bộ ở đây
       await login();
       // Tiếp tục xử lý sau khi Promise hoàn thành
     } catch (error) {
-      console.error('Lỗi: ', error);
+      console.error('Error: ', error);
     }
     
 };
+ 
+    
   return (
     <section>
       <div className="form-box">
@@ -27,7 +29,7 @@ function Login() {
                     <input 
                           type="email" 
                           className="email" 
-                          
+                         
                           onChange={(e) => updateLoginInfor({...loginInfor,email: e.target.value})} required/>
                     <label htmlFor="">Email</label>
                   </div>
@@ -85,6 +87,7 @@ function Login() {
                     Sign In with Google
                   </button>
           </form>
+          
         </div>
       </div>
     </section>
