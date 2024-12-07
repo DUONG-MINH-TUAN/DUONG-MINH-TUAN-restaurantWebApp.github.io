@@ -12,6 +12,7 @@ function SignUp() {
   const handleSignUp = async (e) => {
     
     try{
+      e.preventDefault();
     await registerUser();}
     catch(error){
       console.error('Error: ', error);
@@ -30,6 +31,7 @@ function SignUp() {
                             value={registerInfor.email}                      
                             onChange={(e)=> updateRegisterInfor({...registerInfor, email: e.target.value})}
                             required
+                            autoComplete="email"
                         />
                         <label htmlFor="">Email</label>
 
@@ -41,6 +43,7 @@ function SignUp() {
                             value={registerInfor.password}
                             onChange={(e) => updateRegisterInfor({...registerInfor,password: e.target.value})}
                             required
+                            autoComplete="new-password"
                         />
                         <label htmlFor="">Password</label>
                     </div>
@@ -51,21 +54,25 @@ function SignUp() {
                             value={registerInfor.confirmedPassword}
                             onChange={(e)=>updateRegisterInfor({...registerInfor,confirmedPassword: e.target.value})} 
                             required
+                            autoComplete="new-password"
                         />
                         <label htmlFor="">Confirmed Password</label>
                     </div>
                     <button type="submit">Sign Up</button>
 
                     {/* alert controller */}
-                    <div>
+                    
                     {registerError && (
-                      <div className="alert alert-danger"> {/* Thêm class CSS tùy ý */}
-                        <p>{registerError}</p>
+                      <div className="alert alert-danger"> 
+                      {registerError.message && <p>{registerError.message}</p>}
+                         {registerError.email && <p>{registerError.email}</p>}
+                          {registerError.password && <p>{registerError.password}</p>}
+                          {registerError.confirmedPassword && <p>{registerError.confirmedPassword}</p>}
                       </div>
+                      
                         )}
                        
-                    </div>
-
+                
                     {/* <!-- create two lines and one word between them --> */}
                     <div className="line-with-text"> 
                         <span className="line"></span>

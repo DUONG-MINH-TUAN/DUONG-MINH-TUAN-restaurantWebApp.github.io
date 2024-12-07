@@ -58,18 +58,16 @@ function Login() {
                   
 
 
-                    {/* alert controller */}
-                    <div>
-                    {loginError && (
-                      <div className="alert alert-danger"> {/* Thêm class CSS tùy ý */}
-                        <p>{loginError}</p>
+                     {/* alert controller */}
+                    
+                     {loginError && (
+                      <div className="alert alert-danger"> 
+                      {loginError.message && <p>{loginError.message}</p>}
+                         {loginError.email && <p>{loginError.email}</p>}
+                          {loginError.password && <p>{loginError.password}</p>}
                       </div>
+                      
                         )}
-                       
-                    </div>
-
-
-
                   {/* create two lines and one word between them */}
                   <div className="line-with-text">
                     <span className="line"></span>

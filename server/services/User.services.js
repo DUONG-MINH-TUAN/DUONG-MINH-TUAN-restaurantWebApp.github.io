@@ -25,10 +25,10 @@ const sanitizeController = (email,password,confirmedPassword = null) => {
     const sanitizedPassword = purify.sanitize(password.trim());
     if(password){
         
-        // const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-        // if (!passwordRegex.test(sanitizedPassword)) {
-        //     errors.password = 'Password must be at least 8 characters, contain letters, numbers, and special characters.';
-        //   }
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if (!passwordRegex.test(sanitizedPassword)) {
+            errors.password = 'Password must be at least 8 characters, contain letters, numbers, and special characters.';
+          }
         
     }
 
