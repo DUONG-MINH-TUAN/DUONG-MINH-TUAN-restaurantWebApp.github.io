@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import AboutPage from "./aboutUs";
 import Hero from "./hero";
 import Header from "./header";
-import "../assets/css/home.css";
 import GlobalStyle from "../assets/globalStyle/home.globalStyle";
 
 function Home(){

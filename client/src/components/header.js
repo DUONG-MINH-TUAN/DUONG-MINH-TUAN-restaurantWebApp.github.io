@@ -6,7 +6,8 @@ function header(){
             <div className="container">
 
                 <a href="#" className="logo">
-                    <img src={TTT} width="160" height="50" alt="TTT - Home"/>
+                    {/* <img src={TTT} width="160" height="50" alt="TTT - Home"/> */}
+                    TTT
                 </a>
         
                 <nav className="navbar" data-navbar>

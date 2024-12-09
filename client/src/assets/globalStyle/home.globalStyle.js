@@ -6,17 +6,6 @@ const GlobalStyle = createGlobalStyle`
 
 
 
-/*-----------------------------------*\
-  #index.css
-\*-----------------------------------*/
-
-/**
- * copyright 2022 codewithsadee
- */
-
-
-
-
 
 /*-----------------------------------*\
   #CUSTOM PROPERTY
@@ -180,7 +169,7 @@ address { font-style: normal; }
 
 html {
   font-size: 10px;
-  scroll-behavior: smooth;
+  
 }
 
 body {
@@ -1344,6 +1333,12 @@ textarea.input-field {
   margin-block-end: 40px;
 }
 
+a.logo{
+  font-family: "Lavishly Yours", cursive;
+  font-weight: 400;
+  font-size: 5.5rem;
+  color: #958161;
+}
 .footer-brand :is(.body-4, .label-1) {
   color: var(--quick-silver);
   line-height: var(--lineHeight-3);
