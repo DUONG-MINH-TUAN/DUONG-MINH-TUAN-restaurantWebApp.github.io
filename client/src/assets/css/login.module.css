@@ -1,0 +1,353 @@
+
+
+.loginTemplate{
+    margin: 0;
+    padding: 0;
+    font-family: 'Raleway', sans-serif;
+  
+  }
+  
+  
+.loginTemplate  section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    background: #00ff00;
+    /* background: url('../src/assets/img/login6.webp') no-repeat; */
+    background: url('../img/login6.webp') no-repeat;
+    background-position: center;
+    background-size: cover;
+  }
+  
+  .loginTemplate .formBox{
+    position: relative;
+    width: 400px;
+    height: 630px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .loginTemplate
+  .formBox.registerBox{
+    position: relative;
+    width: 400px;
+    height: 650px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .loginTemplate
+  h2{
+    font-size: 2em;
+    color:#fff;
+    text-align: center;
+  }
+  
+  .loginTemplate
+ .inputbox{
+    position: relative;
+    margin:30px 0;
+    width: 310px;
+    border-bottom: 2px solid #FFD700;
+  }
+  
+  .loginTemplate
+  .inputbox label{
+    position: absolute;
+    top:50%;
+    left: 5px;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 1em;
+    pointer-events: none;
+    transition: top 0.3s ease, font-size 0.3s ease;
+  }
+  /* Khi input có giá trị, ẩn placeholder */
+input:not(:placeholder-shown) {
+  color: transparent; /* Đặt màu chữ của placeholder thành transparent (vô hình) */
+}
+
+/* Hoặc nếu bạn muốn placeholder biến mất hoàn toàn khi có giá trị, có thể sử dụng: */
+input:not(:placeholder-shown)::-webkit-input-placeholder {
+  visibility: hidden; /* Ẩn placeholder trong trường hợp input có giá trị */
+}
+
+input:not(:placeholder-shown):-ms-input-placeholder {
+  visibility: hidden; /* Ẩn placeholder cho IE */
+}
+
+input:not(:placeholder-shown)::placeholder {
+  visibility: hidden; /* Ẩn placeholder cho các trình duyệt hiện đại */
+}
+
+/* Khi input có giá trị, ẩn placeholder */
+input:placeholder-shown {
+  color: transparent; /* Đặt màu chữ của placeholder thành transparent (vô hình) */
+}
+
+/* Hoặc nếu bạn muốn placeholder biến mất hoàn toàn khi có giá trị, có thể sử dụng: */
+input:placeholder-shown::-webkit-input-placeholder {
+  visibility: hidden; /* Ẩn placeholder trong trường hợp input có giá trị */
+}
+
+input:placeholder-shown:-ms-input-placeholder {
+  visibility: hidden; /* Ẩn placeholder cho IE */
+}
+
+input:placeholder-shown::placeholder {
+  visibility: hidden; /* Ẩn placeholder cho các trình duyệt hiện đại */
+}
+  .loginTemplate
+  .inputbox input:focus ~ label,
+.inputbox input:not(:placeholder-shown) ~ label{
+    top: -5px;
+    font-size: .9em;
+  }
+  .loginTemplate
+ .inputbox input:not(:focus):placeholder-shown ~ label {
+    top: 50%;
+    font-size: 1em;
+  }
+  .loginTemplate
+ .inputbox input {
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    padding:0 35px 0 5px;
+    color: #fff;
+  
+  }
+  
+  .loginTemplate
+ .inputbox ion-icon{
+    position: absolute;
+    right: 8px;
+    color: #fff;
+    top: 20px; 
+  }
+  
+  .loginTemplate
+ .forget{
+    margin: -15px 0 15px;
+    font-size: .9em;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  
+  .loginTemplate
+ button{
+    width: 100%;
+    height: 40px;
+    border-radius: 40px;
+    background: #fff;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+  }
+  
+  .loginTemplate
+ .register{
+    /* width: 300px; */
+    font-size: .9em;
+    color: #fff;
+    margin: 25px 0 10px;
+  }
+  
+  .loginTemplate
+ .register p a{
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+  }
+  .loginTemplate
+ .register p a:hover{
+    text-decoration: underline;
+  }
+  
+  
+  .loginTemplate
+ .rememberMe {
+    display: flex;
+    color: #fff;
+    margin-top: 20px;
+  }
+  
+  .loginTemplate
+ .rememberMe input[type="checkbox"] {
+    
+    width: 18px;
+    height: 20px;
+    margin-right: 10px;
+    accent-color: #ffaf40; /* change checkbox color */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  
+  .loginTemplate
+ .rememberMe input[type="checkbox"]:checked {
+    transform: scale(1.2); /* add a scaling effect */
+  }
+  
+  .loginTemplate
+ .rememberMe span {
+    font-size: 1.1em;
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .loginTemplate
+ .rememberMe span:hover {
+    color: #ffaf40; /* change when hovering */
+  }
+  
+  
+  .loginTemplate
+ .lineWithText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0;
+  }
+  
+  .loginTemplate
+ .line {
+    flex: 1;
+    height: 2px;
+    background-color: #ffaf40; /* Màu của đường kẻ */
+    margin: 0 10px; /* Khoảng cách giữa các đường kẻ */
+    position:relative;
+  }
+  
+  .loginTemplate
+ .text {
+    font-size: 1.2em;
+    color: #fff; /* Màu của chữ */
+    padding: 0 10px; /* Khoảng cách giữa chữ và đường kẻ */
+  }
+  
+  .loginTemplate
+ .line::before, .line::after {
+    content: ''; 
+    position: absolute;
+    bottom: 1px;
+    width: 8px; /* the width of diamond */
+    height: 8px; /* the height of diamond */
+    background-color: #ffaf40; /* the color of the diamond*/
+    transform: rotate(45deg); /* rotate the square into the diamond */
+  }
+  /* the diamond in the right */
+  .loginTemplate
+ .line::before {
+    left: -8px; /* align the diamond to the left and right */
+    top: -3px; /* align the diamond to the top and bottom*/
+  
+  }
+  /* the diamond in the right */
+  .loginTemplate
+ .line::after {
+    right: -7px; /* align the diamond to the left and right */
+    top: -3px; /* align the diamond to the top and bottom*/
+  }
+  
+  .loginTemplate
+ .forgotPassword{
+    margin-top: 20px;
+    font-size: 1.1em;
+    
+  }
+  
+  .loginTemplate
+ .googleButton{
+    position: relative;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .loginTemplate
+ .googleButton img{
+    position: absolute;
+    width: 30px;
+    left: 13px;
+  }
+  
+  
+  
+  /* alert dialog in the login page */
+  
+  /* Style chung cho thông báo lỗi */
+  .loginTemplate
+ .alert {
+    /* margin-top: 10px; */
+      width: 300px;
+      height: 60px;
+      border-radius: 40px;
+      background: #fff;
+      border: none;
+      outline: none;
+      cursor: pointer;
+    padding: 5px;
+    margin: 20px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    opacity: 0; /* Đặt mặc định là ẩn */
+    animation: fadeIn 0.5s forwards;
+  }
+  
+  /* Cảnh báo lỗi - màu đỏ */
+  .loginTemplate
+ .alertDanger {
+    
+      font-size: 1em;
+      font-weight: 600;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  /* Hiệu ứng fade in khi thông báo xuất hiện */
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  /* Hiệu ứng hover để làm nổi bật cảnh báo */
+  .loginTemplate
+ .alertDanger:hover {
+    
+    background-color: #f5c6cb;
+    border-color: #f1a7b2;
+  }
+  
+  
+  

@@ -3,6 +3,9 @@ const { findUserByEmail, createUser } = require('../Models/User.model');
 const {generateAccessToken,generateRefreshToken} = require('./Auth.services');
 const DOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
+const jwt =require('jsonwebtoken');
+require('dotenv').config();
+const SECRET_KEY = process.env.SECRET_KEY;
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
 const COOKIE_OPTIONS = {
@@ -23,14 +26,14 @@ const sanitizeController = (email,password,confirmedPassword = null) => {
       }
     }
     const sanitizedPassword = purify.sanitize(password.trim());
-    if(password){
+    // if(password){
         
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-        if (!passwordRegex.test(sanitizedPassword)) {
-            errors.password = 'Password must be at least 8 characters, contain letters, numbers, and special characters.';
-          }
+    //     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    //     if (!passwordRegex.test(sanitizedPassword)) {
+    //         errors.password = 'Password must be at least 8 characters, contain letters, numbers, and special characters.';
+    //       }
         
-    }
+    // }
 
     if(confirmedPassword){
     const sanitizedConfirmedPassword = purify.sanitize(confirmedPassword);
@@ -126,3 +129,28 @@ if (!email || !password) {
         res.status(500).json({ error: error.message });
     }
 };
+
+
+exports.logout = (req,res) => {
+    //clear refresh token in cookie
+    res.clearCookie("refreshToken");
+    res.send("Logged out successfully!!!");
+}
+
+
+exports.getUserDetails= (req,res) =>{
+    const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).send("No token provided");
+  }
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) {
+      return res.status(403).send("Invalid token");
+    }
+
+    res.send("This is a protected route");
+  });
+}   

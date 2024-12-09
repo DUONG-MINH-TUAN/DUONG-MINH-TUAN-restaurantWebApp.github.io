@@ -20,7 +20,7 @@ exports.reloadAccessToken = async (req, res) => {
         if (err) return res.status(403).json({ message: 'Invalid refresh token' });
 
         const newAccessToken = this.generateAccessToken(user);
-        res.json({ accessToken: newAccessToken });
+        res.json({ accessToken: newAccessToken});
     });
 };
 //create refresh token

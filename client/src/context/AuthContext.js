@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
     const updateLoginInfor = (infor) => {
         setLoginInfor(infor);
     }
+    console.log(loginInfor);
     const updateRegisterInfor = (infor) => {
         setRegisterInfor(infor);
     }
@@ -55,13 +56,13 @@ export const AuthProvider = ({ children }) => {
                 temp.valid = false;
             }
         }
-        if (password) {
+        // if (password) {
             
-            if (!passwordRegex.test(sanitizedPassword)) {
-                temp.errors.password = 'Password must be at least 8 characters, contain letters, numbers, and special characters.';
-                temp.valid = false;
-            }
-        }
+        //     if (!passwordRegex.test(sanitizedPassword)) {
+        //         temp.errors.password = 'Password must be at least 8 characters, contain letters, numbers, and special characters.';
+        //         temp.valid = false;
+        //     }
+        // }
         if (confirmedPassword) {
             const sanitizedConfirmedPassword = DOMPurify.sanitize(confirmedPassword.trim());
             if (sanitizedPassword !== sanitizedConfirmedPassword) {
@@ -115,10 +116,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    
     const logout = useCallback(() => {
         localStorage.removeItem("accessToken");
         axios.post(`${baseUrl}/logout`);
     }, [])
+
+
+    // const getUserDetails = 
     const login = useCallback(async () => {
         try {
             const temp = validateForm(loginInfor.email,loginInfor.password);

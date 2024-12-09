@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from "../context/AuthContext";
 import logoGoogle from '../assets/img/logo-google-2.svg';
 import { Link } from 'react-router-dom';
+import styles from '../assets/css/login.module.css';
 function SignUp() {
   const { updateRegisterInfor,
           registerInfor, 
@@ -19,12 +20,13 @@ function SignUp() {
     }
 };
   return (
+    <div className={styles.loginTemplate}>
         <section>
-        <div className="form-box register-box">
-            <div className="form-value">
+        <div className={`${styles.formBox} ${styles.registerBox} `}>
+            {/* <div className="form-value"> */}
                 <form onSubmit={handleSignUp}>
                     <h2>Sign Up</h2>
-                    <div className="inputbox">
+                    <div className={styles.inputbox}>
                         <ion-icon name="mail-outline"></ion-icon>
                         <input 
                             type="email" 
@@ -36,7 +38,7 @@ function SignUp() {
                         <label htmlFor="">Email</label>
 
                     </div>
-                    <div className="inputbox">
+                    <div className={styles.inputbox}>
                         <ion-icon name="lock-closed-outline"></ion-icon>
                         <input 
                             type="password" 
@@ -47,7 +49,7 @@ function SignUp() {
                         />
                         <label htmlFor="">Password</label>
                     </div>
-                    <div className="inputbox">
+                    <div className={styles.inputbox}>
                         <ion-icon name="lock-closed-outline"></ion-icon>
                         <input 
                             type="password"
@@ -58,12 +60,16 @@ function SignUp() {
                         />
                         <label htmlFor="">Confirmed Password</label>
                     </div>
-                    <button type="submit">Sign Up</button>
+                    <button type="submit"disabled={isRegisterLoading}>
+                    {
+                    isRegisterLoading ? "Loading...." : "Register"
+                    }  
+                      </button>
 
                     {/* alert controller */}
                     
                     {registerError && (
-                      <div className="alert alert-danger"> 
+                      <div className={`${styles.alert} ${styles.alertDanger}`}> 
                       {registerError.message && <p>{registerError.message}</p>}
                          {registerError.email && <p>{registerError.email}</p>}
                           {registerError.password && <p>{registerError.password}</p>}
@@ -74,28 +80,29 @@ function SignUp() {
                        
                 
                     {/* <!-- create two lines and one word between them --> */}
-                    <div className="line-with-text"> 
-                        <span className="line"></span>
-                        <span className="text">OR</span>
-                        <span className="line"></span>
+                    <div className={styles.lineWithText}> 
+                        <span className={styles.line}></span>
+                        <span className={styles.text}>OR</span>
+                        <span className={styles.line}></span>
                     </div>
-                    <div className="register">
+                    <div className={styles.register}>
                       <p>
                         Already have an account?  <Link to="/login">Sign In</Link>
                       </p>
                       
                     </div>
                     
-                    <button className="google-button"> 
+                    <button className={styles.googleButton}> 
                             <img src={logoGoogle} alt=""/>
                             Sign In with Google
                     </button>    
 
                 </form>
 
-            </div>
+            {/* </div> */}
         </div>
     </section>
+    </div>
   );
 };
 
