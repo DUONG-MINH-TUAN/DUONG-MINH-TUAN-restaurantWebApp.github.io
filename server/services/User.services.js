@@ -15,6 +15,16 @@ const COOKIE_OPTIONS = {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
 
+// decode and take token expiration
+const getTokenExpiry = (token) => {
+    const decodedToken = jwt.decode(token); // Giải mã token
+    if (decodedToken && decodedToken.exp) {
+        const expiryTime = decodedToken.exp * 1000; // Chuyển từ giây thành mili giây
+        return new Date(expiryTime); // Trả về thời gian hết hạn dưới dạng đối tượng Date
+    }
+    return null; // Nếu không có trường exp
+}
+
 const sanitizeController = (email,password,confirmedPassword = null) => {
     const errors = {};
     const sanitizedEmail = purify.sanitize(email.trim());
@@ -121,8 +131,11 @@ if (!email || !password) {
         const refreshToken = generateRefreshToken(user);
         
         res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
-        // console.log('refreshtoken: ', refreshToken);
-        // console.log('accessToken: ',accessToken);
+        console.log('refreshtoken: ', refreshToken);
+        console.log('accessToken: ',accessToken);
+
+        const expiryDate = getTokenExpiry(accessToken);
+        console.log('expiry date of access token: ',accessToken);
         res.json({ accessToken });
 
     } catch (error) {

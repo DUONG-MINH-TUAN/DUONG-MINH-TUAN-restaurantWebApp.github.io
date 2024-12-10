@@ -1,7 +1,9 @@
 import { createContext, useState, useCallback, useEffect, useContext } from "react";
-import { baseUrl } from '../services/requestManager';
+import { baseUrl,serverUrl } from '../services/requestManager';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
+import instance from "../config/axiosInstance";
+import {jwtDecode} from "jwt-decode";
 
 const AuthContext = createContext();
 
@@ -22,7 +24,80 @@ export const AuthProvider = ({ children }) => {
     const [isRegisterLoading, setIsRegisterLoading] = useState(false);
     const [registerError, setRegisterError] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
+    const [expiredAt,setExpiredAt] = useState(localStorage.getItem('expiredAt'));
+    const checkExpiration = (token) =>{
+        if (!token) {
+            console.log("There is no input access token ");
+            return false;
+        } 
+        try {
+        const decodedToken = jwtDecode(token);
+        const expTime = decodedToken.exp;
+        const currentTime = Date.now() / 1000; // in second
+        return expTime < currentTime;
+    }
+        catch(error){
+            return true; 
+        }
+        
+    }
+    useEffect(() => {
+        // Cập nhật khi giá trị trong localStorage thay đổi
+        const handleStorageChange = () => {
+          setAccessToken(localStorage.getItem('accessToken'));
+        };
+    
+        // Lắng nghe sự kiện 'storage' khi localStorage thay đổi
+        window.addEventListener('storage', handleStorageChange);
+    
+        // Clean up khi component unmount
+        return () => {
+          window.removeEventListener('storage', handleStorageChange);
+        };
+      }, []);
 
+    const reloadAccessToken = async()=>{
+        try{
+            const response = await instance.post(`${baseUrl}/refresh`);
+            if (response.data.accessToken) {
+                setAccessToken(response.data.accessToken);
+                localStorage.setItem('accessToken', response.data.accessToken); 
+              }
+            console.log("Reload access token");
+        }catch(error){
+            let errorMessage = 'unknown error';
+            if (error.response){
+                errorMessage = error.response?.data?.message || error.message;
+            } else if (error.request){
+                errorMessage = 'No Internet';
+            } else {
+                errorMessage = error.message;
+            }
+            console.log(errorMessage);
+        }
+    }
+    useEffect(()=>{
+        try{
+            if(checkExpiration(accessToken)){
+            reloadAccessToken();
+        }else{
+            const decodedToken = jwtDecode(accessToken);
+            setUser(decodedToken);
+            console.log(user);
+        }
+        }catch(error){
+            let errorMessage = 'unknown error';
+            if (error.response){
+                errorMessage = error.response?.data?.message || error.message;
+            } else if (error.request){
+                errorMessage = 'No Internet';
+            } else {
+                errorMessage = error.message;
+            }
+            console.log(errorMessage);
+        }
+    },[accessToken]);
     const updateLoginInfor = (infor) => {
         setLoginInfor(infor);
     }
@@ -74,6 +149,17 @@ export const AuthProvider = ({ children }) => {
         
         return temp;
     };
+
+    const checkServerStatus = async() => {
+        try{
+        const response = await axios.get(`${serverUrl}/status`);
+       
+        return response.status === 200;
+        } catch(error){
+            console.error('Server status check failed:', error);
+            return false; 
+        }
+    }
     const registerUser = useCallback(async () => {
         try {
             // Validation
@@ -83,6 +169,9 @@ export const AuthProvider = ({ children }) => {
             }
             console.log(temp.errors);
             if (!temp.valid) return;
+
+            
+
             setIsRegisterLoading(true);
             const response = await axios.post(`${baseUrl}/signup`, registerInfor);
             setIsRegisterLoading(false);
@@ -117,9 +206,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     
-    const logout = useCallback(() => {
+    const logout = useCallback( async() => {
         localStorage.removeItem("accessToken");
-        axios.post(`${baseUrl}/logout`);
+        await axios.post(`${baseUrl}/logout`);
     }, [])
 
 
@@ -132,11 +221,20 @@ export const AuthProvider = ({ children }) => {
             }
             console.log(temp.errors);
             if (!temp.valid) return;
+            // Check the server status
+            const serverStatus = await checkServerStatus();  // Chắc chắn rằng bạn chờ đợi kết quả từ checkServerStatus
+            if (!serverStatus) {
+                setLoginError({ message: 'Server is not running!!! \nPlease start the server!!!' });
+                return;
+            }
             setIsLoginLoading(true);
             setLoginError(null);
             const response = await axios.post(`${baseUrl}/login`,loginInfor); 
+            
+            // save the access token into the local storage
             localStorage.setItem("accessToken", response.data.accessToken);
             setUser(response);
+            console.log("user when login: ",user);
             setIsLoginLoading(false);
         } catch (error) {
             let errorMessage = 'Unknown error';

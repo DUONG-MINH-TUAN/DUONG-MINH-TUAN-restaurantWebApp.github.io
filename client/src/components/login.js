@@ -69,7 +69,13 @@ function Login() {
                           
                           {loginError && (
                             <div className={`${styles.alert} ${styles.alertDanger}`}> 
-                            {loginError.message && <p>{loginError.message}</p>}
+                            {loginError.message &&  
+                                loginError.message.split('\n').map((line, index) => (
+                                          <p key={index}>{line}</p>  
+                                    )
+                                  )
+                                
+                              }
                               {loginError.email && <p>{loginError.email}</p>}
                                 {loginError.password && <p>{loginError.password}</p>}
                             </div>
