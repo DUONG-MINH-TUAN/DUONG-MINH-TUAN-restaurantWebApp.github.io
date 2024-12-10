@@ -7,13 +7,15 @@ import Login from './components/login';
 import Home from './components/home';
 import Signup from './components/signup';
 function App() {
-  const {user} =useAuth();
+  const {accessToken} =useAuth();
   return (
     
         <Routes>
             {/* <Route path="/" element={<Home/>}/> 
+            
             <Route path="/login" element ={user ? <Home/> : <Login/>}/> */}
-            <Route path="/" element={<Login/>}/> 
+            <Route path="/" element={accessToken ? <Home/> : <Login/>}/> 
+            <Route path="/login" element={<Login/>}/>
             <Route path="/signUp" element ={<Signup/>}/>
         </Routes>
     

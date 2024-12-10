@@ -8,7 +8,8 @@ const REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY;
 
 //create access token 
 exports.generateAccessToken = (user) => {
-    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'1m'});
+    console.log("user",user.id);
+    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'40s'});
 }
 
 // API yêu cầu refresh token

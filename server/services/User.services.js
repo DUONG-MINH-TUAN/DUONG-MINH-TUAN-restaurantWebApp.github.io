@@ -131,12 +131,13 @@ if (!email || !password) {
         const refreshToken = generateRefreshToken(user);
         
         res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
-        console.log('refreshtoken: ', refreshToken);
-        console.log('accessToken: ',accessToken);
+        // console.log('refreshtoken: ', refreshToken);
+        // console.log('accessToken: ',accessToken);
 
-        const expiryDate = getTokenExpiry(accessToken);
-        console.log('expiry date of access token: ',accessToken);
-        res.json({ accessToken });
+        // const expiryDate = getTokenExpiry(accessToken);
+        // console.log('expiry date of access token: ',expiryDate);
+        
+        res.json({ accessToken});
 
     } catch (error) {
         res.status(500).json({ error: error.message });

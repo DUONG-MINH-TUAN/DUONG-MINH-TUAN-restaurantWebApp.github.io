@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     const [registerError, setRegisterError] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
-    const [expiredAt,setExpiredAt] = useState(localStorage.getItem('expiredAt'));
+    // const [expiryDate,setExpiryDate] = useState(localStorage.getItem('expiryDate'));
     const checkExpiration = (token) =>{
         if (!token) {
             console.log("There is no input access token ");
@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }) => {
         const decodedToken = jwtDecode(token);
         const expTime = decodedToken.exp;
         const currentTime = Date.now() / 1000; // in second
+        console.log(currentTime);
         return expTime < currentTime;
     }
         catch(error){
@@ -42,10 +43,12 @@ export const AuthProvider = ({ children }) => {
         }
         
     }
+    console.log("access token",accessToken);
     useEffect(() => {
         // Cập nhật khi giá trị trong localStorage thay đổi
         const handleStorageChange = () => {
           setAccessToken(localStorage.getItem('accessToken'));
+          setAccessToken(localStorage.getItem('expiryDate'));
         };
     
         // Lắng nghe sự kiện 'storage' khi localStorage thay đổi
@@ -77,31 +80,51 @@ export const AuthProvider = ({ children }) => {
             console.log(errorMessage);
         }
     }
+    
     useEffect(()=>{
-        try{
-            if(checkExpiration(accessToken)){
-            reloadAccessToken();
-        }else{
-            const decodedToken = jwtDecode(accessToken);
-            setUser(decodedToken);
-            console.log(user);
+        
+        const intervalId = setInterval(() => {
+            
+            if (checkExpiration(accessToken)) {
+            // reloadAccessToken();  // Nếu token hết hạn, làm mới token
+            localStorage.removeItem("accessToken");
+            setAccessToken(null);
         }
-        }catch(error){
-            let errorMessage = 'unknown error';
-            if (error.response){
-                errorMessage = error.response?.data?.message || error.message;
-            } else if (error.request){
-                errorMessage = 'No Internet';
-            } else {
-                errorMessage = error.message;
-            }
-            console.log(errorMessage);
-        }
-    },[accessToken]);
+        }, 10000);  
+    
+        // Clean up khi component unmount
+        return () => clearInterval(intervalId);
+    },[accessToken])
+
+    // useEffect(()=>{
+    //     try{
+    //         if(checkExpiration(accessToken)){
+    //         reloadAccessToken();
+            
+    //     }else{
+    //         const decodedToken = jwtDecode(accessToken);
+           
+    //     }
+    //     }catch(error){
+    //         let errorMessage = 'unknown error';
+    //         if (error.response){
+    //             errorMessage = error.response?.data?.message || error.message;
+    //         } else if (error.request){
+    //             errorMessage = 'No Internet';
+    //         } else {
+    //             errorMessage = error.message;
+    //         }
+    //         console.log(errorMessage);
+    //     }
+    // },[expiryDate]);
     const updateLoginInfor = (infor) => {
         setLoginInfor(infor);
     }
+
+
     console.log(loginInfor);
+    
+    
     const updateRegisterInfor = (infor) => {
         setRegisterInfor(infor);
     }
@@ -195,15 +218,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, [registerInfor]);
 
-    // function to create new access token 
-    const refreshAccessToken = async () => {
-        try {
-            const response = await axios.post(`${baseUrl}/refresh`);
-            localStorage.setItem('accessToken', response.data.accessToken);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    
 
     
     const logout = useCallback( async() => {
@@ -222,7 +237,7 @@ export const AuthProvider = ({ children }) => {
             console.log(temp.errors);
             if (!temp.valid) return;
             // Check the server status
-            const serverStatus = await checkServerStatus();  // Chắc chắn rằng bạn chờ đợi kết quả từ checkServerStatus
+            const serverStatus = await checkServerStatus();  
             if (!serverStatus) {
                 setLoginError({ message: 'Server is not running!!! \nPlease start the server!!!' });
                 return;
@@ -233,8 +248,9 @@ export const AuthProvider = ({ children }) => {
             
             // save the access token into the local storage
             localStorage.setItem("accessToken", response.data.accessToken);
-            setUser(response);
-            console.log("user when login: ",user);
+            // localStorage.setItem("expiryDate",response.data.expiryDate);
+            setAccessToken(response.data.accessToken);
+            // setExpiryDate(response.data.expiryDate);
             setIsLoginLoading(false);
         } catch (error) {
             let errorMessage = 'Unknown error';
@@ -272,6 +288,7 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated,
             isAuthenticated,
             setRegisterError,
+            accessToken,    
         }}>
             {children}
         </AuthContext.Provider>

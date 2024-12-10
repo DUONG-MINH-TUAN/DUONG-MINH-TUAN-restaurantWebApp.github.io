@@ -21,7 +21,7 @@ app.use("/api",userController);
 //CRUD
 //check whether the server is running
 app.get("/status",(req, res) => {
-    res.send("Welcome our chat app APIs..");
+    // res.send("Welcome our chat app APIs..");
     return res.status(200).json({message: 'Server is running!!!'})
   });
 app.listen (PORT,()=>{
