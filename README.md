@@ -10,8 +10,9 @@
    ```
    git clone https://github.com/DUONG-MINH-TUAN/DUONG-MINH-TUAN-restaurantWebApp.github.io.git
     ```
-### Running the Client Site
-1. Open the cloned folder and navigate to 'client' directory.
+**Note: With the latest project, we just need to run on the server side only**
+### Running on the server side
+1. Open the cloned folder and navigate to 'server' directory.
 2. Open the terminal and run the following command: 
     ```
     npm install
@@ -22,6 +23,6 @@
     ```
     npm start
     ```
-    **Note: For more detail instructions, please refer to the README file in the 'client' folder.**
+    **Note: For more detail instructions, please refer to the README file in the 'server' folder.**
 
 
