@@ -10,9 +10,9 @@ const window = new JSDOM('').window;
 const purify = DOMPurify(window);
 const COOKIE_OPTIONS = {
     httpOnly: true, // Ngăn chặn truy cập bằng JavaScript
-    // secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS
-    sameSite: 'Strict', // Giới hạn cookie không thể được gửi qua các yêu cầu cross-site
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    secure: false, // Chỉ gửi cookie qua HTTPS
+    sameSite: 'Lax', // Giới hạn cookie không thể được gửi qua các yêu cầu cross-site
+    maxAge: 7 * 24 * 60 * 60 * 1000, //7 days
   };
 
 // decode and take token expiration
@@ -130,8 +130,8 @@ if (!email || !password) {
         const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user);
         
-        res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
-        // console.log('refreshtoken: ', refreshToken);
+        res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+        console.log('refreshtoken: ', refreshToken);
         // console.log('accessToken: ',accessToken);
 
         // const expiryDate = getTokenExpiry(accessToken);

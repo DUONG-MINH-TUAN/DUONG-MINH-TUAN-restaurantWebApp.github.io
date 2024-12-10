@@ -18,11 +18,6 @@ function Home(){
  */
 
 const preloader = document.querySelector("[data-preaload]");
-if(!preloader){
-  console.log("there is no preloader");
-} else{
-  console.log("there is preloader");
-}
 
 
   setTimeout(() => {

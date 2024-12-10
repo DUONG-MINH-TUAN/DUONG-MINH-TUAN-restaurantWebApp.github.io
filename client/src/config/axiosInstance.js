@@ -3,7 +3,8 @@ import {baseUrl} from '../services/requestManager';
 
 
 const instance = axios.create({
-    "baseURL": baseUrl
+    baseURL: 'http://localhost:5000/api',
+    withCredentials: true,
 })
 
 

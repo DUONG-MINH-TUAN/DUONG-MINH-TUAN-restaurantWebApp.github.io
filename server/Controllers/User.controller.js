@@ -10,7 +10,7 @@ router.post('/logout', logout);
 
 
 //create access token again
-router.post('/refresh',reloadAccessToken);
+router.get('/refresh',reloadAccessToken);
 
 //protected route
 //use token to take the username of user

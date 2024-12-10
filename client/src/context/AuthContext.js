@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
     // const [expiryDate,setExpiryDate] = useState(localStorage.getItem('expiryDate'));
     const checkExpiration = (token) =>{
         if (!token) {
-            console.log("There is no input access token ");
+            console.log("No access token ");
             return false;
         } 
         try {
@@ -44,25 +44,12 @@ export const AuthProvider = ({ children }) => {
         
     }
     console.log("access token",accessToken);
-    useEffect(() => {
-        // Cập nhật khi giá trị trong localStorage thay đổi
-        const handleStorageChange = () => {
-          setAccessToken(localStorage.getItem('accessToken'));
-          setAccessToken(localStorage.getItem('expiryDate'));
-        };
     
-        // Lắng nghe sự kiện 'storage' khi localStorage thay đổi
-        window.addEventListener('storage', handleStorageChange);
-    
-        // Clean up khi component unmount
-        return () => {
-          window.removeEventListener('storage', handleStorageChange);
-        };
-      }, []);
 
-    const reloadAccessToken = async()=>{
+    const reloadAccessToken = async ()=>{
         try{
-            const response = await instance.post(`${baseUrl}/refresh`);
+            // const response = await axios.get(`${baseUrl}/refresh`);
+            const response = await axios.get(`${baseUrl}/refresh`, { withCredentials: true });
             if (response.data.accessToken) {
                 setAccessToken(response.data.accessToken);
                 localStorage.setItem('accessToken', response.data.accessToken); 
@@ -71,30 +58,38 @@ export const AuthProvider = ({ children }) => {
         }catch(error){
             let errorMessage = 'unknown error';
             if (error.response){
-                errorMessage = error.response?.data?.message || error.message;
+                if(error.response.status === 401){
+                    setLoginError({message: errorMessage});
+                    logout();
+                }
+                errorMessage = error.response?.data?.message;
             } else if (error.request){
                 errorMessage = 'No Internet';
             } else {
                 errorMessage = error.message;
             }
-            console.log(errorMessage);
+            console.log("Error in reload access token: ",errorMessage);
+            setLoginError({message: errorMessage});
+            
         }
     }
     
     useEffect(()=>{
         
-        const intervalId = setInterval(() => {
-            
+        const intervalId = setInterval(async() => {
             if (checkExpiration(accessToken)) {
-            // reloadAccessToken();  // Nếu token hết hạn, làm mới token
             localStorage.removeItem("accessToken");
             setAccessToken(null);
+            await reloadAccessToken();  // if token is expired, reload new access token
         }
         }, 10000);  
     
         // Clean up khi component unmount
         return () => clearInterval(intervalId);
     },[accessToken])
+
+
+    
 
     // useEffect(()=>{
     //     try{
@@ -175,7 +170,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkServerStatus = async() => {
         try{
-        const response = await axios.get(`${serverUrl}/status`);
+        const response = await axios.get(`${serverUrl}/api/status`);
        
         return response.status === 200;
         } catch(error){
@@ -223,6 +218,7 @@ export const AuthProvider = ({ children }) => {
     
     const logout = useCallback( async() => {
         localStorage.removeItem("accessToken");
+        setAccessToken(null);
         await axios.post(`${baseUrl}/logout`);
     }, [])
 

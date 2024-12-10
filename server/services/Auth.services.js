@@ -9,12 +9,16 @@ const REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY;
 //create access token 
 exports.generateAccessToken = (user) => {
     console.log("user",user.id);
-    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'40s'});
+    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'1m'});
 }
 
 // API yêu cầu refresh token
 exports.reloadAccessToken = async (req, res) => {
+  console.log('Cookies:', req.cookies);  // Kiểm tra giá trị của cookies
+console.log('Refresh Token:', req.cookies.refreshToken);  // Kiểm tra refresh token cụ thể
+
     const refreshToken = req.cookies.refreshToken;
+    console.log("refreshToken when reloading:   ",refreshToken);
     if (!refreshToken) return res.status(401).json({ message: 'No refresh token found, please login again!!!' });
 
     jwt.verify(refreshToken, REFRESH_SECRET_KEY, (err, user) => {
@@ -26,7 +30,7 @@ exports.reloadAccessToken = async (req, res) => {
 };
 //create refresh token
 exports.generateRefreshToken = (user) => {
-    return jwt.sign({id:user.id},REFRESH_SECRET_KEY,{expiresIn:'2m'});
+    return jwt.sign({id:user.id},REFRESH_SECRET_KEY,{expiresIn:'3m'});
 }
 
 
