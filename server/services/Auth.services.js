@@ -8,8 +8,10 @@ const REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY;
 
 //create access token 
 exports.generateAccessToken = (user) => {
-    console.log("user",user.id);
-    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'1m'});
+    if (user.role){
+      return jwt.sign({id:user.id,role:user.role},SECRET_KEY,{expiresIn:'2h'});
+    }
+    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'2h'});
 }
 
 // API yêu cầu refresh token
@@ -30,7 +32,10 @@ console.log('Refresh Token:', req.cookies.refreshToken);  // Kiểm tra refresh 
 };
 //create refresh token
 exports.generateRefreshToken = (user) => {
-    return jwt.sign({id:user.id},REFRESH_SECRET_KEY,{expiresIn:'3m'});
+    if (user.role){
+      return jwt.sign({id:user.id,role:user.role},REFRESH_SECRET_KEY,{expiresIn:'1d'});
+    }
+    return jwt.sign({id:user.id},REFRESH_SECRET_KEY,{expiresIn:'1d'});
 }
 
 

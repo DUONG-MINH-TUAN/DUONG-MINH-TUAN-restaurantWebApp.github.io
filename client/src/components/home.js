@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import AboutPage from "./aboutUs";
 import Hero from "./hero";
-import Header from "./header";
 import GlobalStyle from "../assets/globalStyle/home.globalStyle";
-
+import Footer from "./footer";
+import Header from "./header";
 function Home(){
 
   useEffect(() => {
@@ -120,7 +120,7 @@ const slideNext = function () {
   updateSliderPos();
 }
 
-// heroSliderNextBtn.addEventListener("click", slideNext);
+
 
 const slidePrev = function () {
   if (currentSlidePos <= 0) {
@@ -131,8 +131,6 @@ const slidePrev = function () {
 
   updateSliderPos();
 }
-
-// heroSliderPrevBtn.addEventListener("click", slidePrev);
 
 /**
  * auto slide
@@ -204,6 +202,8 @@ window.addEventListener("mousemove", function (event) {
                     <Hero/>
                 {/* About us page */}
                     <AboutPage/>
+                {/* Footer/Contact */}
+                    <Footer/>
               </article>
                 {/* #BACK TO TOP */}                    
                     <a href="#top" className="back-top-btn active" aria-label="back to top" data-back-top-btn>

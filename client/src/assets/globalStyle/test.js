@@ -1,0 +1,1 @@
+import footer1 from "../img/footer-form-bg2.png"

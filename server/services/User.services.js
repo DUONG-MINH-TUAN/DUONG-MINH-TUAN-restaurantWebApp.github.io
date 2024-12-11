@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { findUserByEmail, createUser } = require('../Models/User.model');
+const { findUserByEmail, createUser,findAdminByEmail, } = require('../Models/User.model');
 const {generateAccessToken,generateRefreshToken} = require('./Auth.services');
 const DOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
@@ -9,21 +9,21 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
 const COOKIE_OPTIONS = {
-    httpOnly: true, // Ngăn chặn truy cập bằng JavaScript
-    secure: false, // Chỉ gửi cookie qua HTTPS
-    sameSite: 'Lax', // Giới hạn cookie không thể được gửi qua các yêu cầu cross-site
+    httpOnly: true, 
+    secure: false, 
+    sameSite: 'Lax', 
     maxAge: 7 * 24 * 60 * 60 * 1000, //7 days
   };
 
-// decode and take token expiration
-const getTokenExpiry = (token) => {
-    const decodedToken = jwt.decode(token); // Giải mã token
-    if (decodedToken && decodedToken.exp) {
-        const expiryTime = decodedToken.exp * 1000; // Chuyển từ giây thành mili giây
-        return new Date(expiryTime); // Trả về thời gian hết hạn dưới dạng đối tượng Date
-    }
-    return null; // Nếu không có trường exp
-}
+// // decode and take token expiration
+// const getTokenExpiry = (token) => {
+//     const decodedToken = jwt.decode(token); // Giải mã token
+//     if (decodedToken && decodedToken.exp) {
+//         const expiryTime = decodedToken.exp * 1000; // Chuyển từ giây thành mili giây
+//         return new Date(expiryTime); // Trả về thời gian hết hạn dưới dạng đối tượng Date
+//     }
+//     return null; // Nếu không có trường exp
+// }
 
 const sanitizeController = (email,password,confirmedPassword = null) => {
     const errors = {};
@@ -114,11 +114,33 @@ if (!email || !password) {
     }
         // find user through email
         const user = await findUserByEmail(sanitizedEmail);
-
+    
         // check the user validity
         if (!user) {
-            return res.status(401).json({ message: 'Invalid email or password' });
-        }
+            
+            const admin = await findAdminByEmail(sanitizedEmail);
+            if (!admin){
+                return res.status(401).json({ message: 'Invalid email or password' });
+            }
+            // check the password validity
+                const isPasswordValid = await bcrypt.compare(sanitizedPassword, user.password);
+                if (!isPasswordValid) {
+                    return res.status(401).json({ message: 'Incorrect password' });
+                }
+
+                //create two tokens
+                const accessToken = generateAccessToken(user);
+                const refreshToken = generateRefreshToken(user);
+                
+                res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+                console.log('refreshtoken: ', refreshToken);
+                // console.log('accessToken: ',accessToken);
+
+                // const expiryDate = getTokenExpiry(accessToken);
+               
+                return res.json({ accessToken});
+        } 
+        
 
         // check the password validity
         const isPasswordValid = await bcrypt.compare(sanitizedPassword, user.password);

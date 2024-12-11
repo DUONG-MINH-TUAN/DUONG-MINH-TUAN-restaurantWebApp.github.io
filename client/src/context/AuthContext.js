@@ -25,7 +25,10 @@ export const AuthProvider = ({ children }) => {
     const [registerError, setRegisterError] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
-    // const [expiryDate,setExpiryDate] = useState(localStorage.getItem('expiryDate'));
+    
+
+    // TOKEN
+    // check expiration for token
     const checkExpiration = (token) =>{
         if (!token) {
             console.log("No access token ");
@@ -45,7 +48,7 @@ export const AuthProvider = ({ children }) => {
     }
     console.log("access token",accessToken);
     
-
+    //reload access token based on refresh token
     const reloadAccessToken = async ()=>{
         try{
             // const response = await axios.get(`${baseUrl}/refresh`);
@@ -73,7 +76,8 @@ export const AuthProvider = ({ children }) => {
             
         }
     }
-    
+
+    // Automatic checker for token
     useEffect(()=>{
         
         const intervalId = setInterval(async() => {
@@ -90,39 +94,71 @@ export const AuthProvider = ({ children }) => {
 
 
     
+    // ADMIN
+    const promoteAdmin = async()=>{
+        
+        const response = instance.post(`${baseUrl}/promote-to-admin`);
 
-    // useEffect(()=>{
-    //     try{
-    //         if(checkExpiration(accessToken)){
-    //         reloadAccessToken();
+
+    }
+    
+
+
+    
+    // SERVER
+    // server checker
+    const checkServerStatus = async() => {
+        try{
+        const response = await axios.get(`${serverUrl}/api/status`);
+       
+        return response.status === 200;
+        } catch(error){
+            console.error('Server status check failed:', error);
+            return false; 
+        }
+    }
+
+
+    // USER
+    const registerUser = useCallback(async () => {
+        try {
+            // Validation
+            const temp = validateForm(registerInfor.email,registerInfor.password,registerInfor.confirmedPassword);
+            if (Object.keys(temp.errors).length > 0) {
+                setRegisterError(temp.errors);  // Đặt lỗi vào state
+            }
+            console.log(temp.errors);
+            if (!temp.valid) return;
+
             
-    //     }else{
-    //         const decodedToken = jwtDecode(accessToken);
-           
-    //     }
-    //     }catch(error){
-    //         let errorMessage = 'unknown error';
-    //         if (error.response){
-    //             errorMessage = error.response?.data?.message || error.message;
-    //         } else if (error.request){
-    //             errorMessage = 'No Internet';
-    //         } else {
-    //             errorMessage = error.message;
-    //         }
-    //         console.log(errorMessage);
-    //     }
-    // },[expiryDate]);
+
+            setIsRegisterLoading(true);
+            const response = await axios.post(`${baseUrl}/signup`, registerInfor);
+            setIsRegisterLoading(false);
+
+            setUser(response);
+        } catch (error) {
+            let errorMessage = 'Unknown error';
+            if (error.response) {
+                // Server returned a response with error code
+                errorMessage = error.response?.data?.message || error.message;
+            } else if (error.request) {
+                // No response from server, possibly network issues
+                errorMessage = 'No Internet';
+            } else {
+                // Something went wrong in setting up the request
+                errorMessage = error.message;
+            }
+            setRegisterError(errorMessage);
+            setIsRegisterLoading(false);
+            return;
+        }
+    }, [registerInfor]);
+
     const updateLoginInfor = (infor) => {
         setLoginInfor(infor);
     }
-
-
-    console.log(loginInfor);
-    
-    
-    const updateRegisterInfor = (infor) => {
-        setRegisterInfor(infor);
-    }
+    //validation and sanitization
     const validateForm = (email, password, confirmedPassword = null) => {
         const errors = {};
         
@@ -168,52 +204,13 @@ export const AuthProvider = ({ children }) => {
         return temp;
     };
 
-    const checkServerStatus = async() => {
-        try{
-        const response = await axios.get(`${serverUrl}/api/status`);
-       
-        return response.status === 200;
-        } catch(error){
-            console.error('Server status check failed:', error);
-            return false; 
-        }
-    }
-    const registerUser = useCallback(async () => {
-        try {
-            // Validation
-            const temp = validateForm(registerInfor.email,registerInfor.password,registerInfor.confirmedPassword);
-            if (Object.keys(temp.errors).length > 0) {
-                setRegisterError(temp.errors);  // Đặt lỗi vào state
-            }
-            console.log(temp.errors);
-            if (!temp.valid) return;
 
-            
-
-            setIsRegisterLoading(true);
-            const response = await axios.post(`${baseUrl}/signup`, registerInfor);
-            setIsRegisterLoading(false);
-
-            setUser(response);
-        } catch (error) {
-            let errorMessage = 'Unknown error';
-            if (error.response) {
-                // Server returned a response with error code
-                errorMessage = error.response?.data?.message || error.message;
-            } else if (error.request) {
-                // No response from server, possibly network issues
-                errorMessage = 'No Internet';
-            } else {
-                // Something went wrong in setting up the request
-                errorMessage = error.message;
-            }
-            setRegisterError(errorMessage);
-            setIsRegisterLoading(false);
-            return;
-        }
-    }, [registerInfor]);
-
+    console.log(loginInfor);
     
+    
+    const updateRegisterInfor = (infor) => {
+        setRegisterInfor(infor);
+    }
 
     
     const logout = useCallback( async() => {
@@ -223,7 +220,6 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
 
-    // const getUserDetails = 
     const login = useCallback(async () => {
         try {
             const temp = validateForm(loginInfor.email,loginInfor.password);

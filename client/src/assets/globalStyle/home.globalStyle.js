@@ -1,7 +1,13 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
+/*-----------------------------------*\
+  #index.css
+\*-----------------------------------*/
 
+/**
+ * copyright 2022 codewithsadee
+ */
 
 
 
@@ -169,7 +175,7 @@ address { font-style: normal; }
 
 html {
   font-size: 10px;
-  
+  scroll-behavior: smooth;
 }
 
 body {
@@ -537,8 +543,7 @@ body.nav-active { overflow: hidden; }
 .preload.loaded > * { opacity: 0; }
 
 .preload.loaded {
-  transition-delay: 150ms;
-  /* 250 */
+  transition-delay: 250ms;
   transform: translateY(100%);
 }
 
@@ -550,7 +555,6 @@ body.nav-active { overflow: hidden; }
   border-block-start-color: var(--smoky-black-3);
   margin-block-end: 45px;
   animation: rotate360 1s linear infinite;
-  /* 1s */
 }
 
 @keyframes rotate360 {
@@ -571,11 +575,10 @@ body.nav-active { overflow: hidden; }
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-stroke: 0.5px var(--eerie-black-3);
-  animation: LoadingText linear 2s infinite;
-  /* 2s */
+  animation: loadingText linear 2s infinite;
 }
 
-@keyframes LoadingText {
+@keyframes loadingText {
   0% { background-position: 100%; }
   100% { background-position: 0%; }
 }
@@ -1304,13 +1307,17 @@ textarea.input-field {
 /*-----------------------------------*\
   #FOOTER
 \*-----------------------------------*/
+.footer{
+  background-image: url("/assets/img/footer-bg2.png");
+}
+
 
 .footer-top { margin-block-end: 70px; }
 
 .footer-brand {
   position: relative;
-  padding: 50px 40px;
-  background: var(--smoky-black-1) url("../images/footer-form-bg.png");
+  padding: 200px 40px;
+  background: var(--smoky-black-1) url("/assets/img/footer-form-bg2.png");
   background-position: center top;
   background-repeat: repeat;
 }
@@ -1320,64 +1327,34 @@ textarea.input-field {
   top: 0;
   width: 15px;
   height: 100%;
-  background-image: url("../images/footer-form-pattern.svg");
+  background-image: url("/assets/img/footer-form-pattern.svg");
 }
 
 .footer-brand::before { left: 0; }
 
 .footer-brand::after { right: 0; }
 
-.footer-brand .logo {
+.footer-brand a.logo {
   max-width: max-content;
   margin-inline: auto;
   margin-block-end: 40px;
-}
-
-a.logo{
   font-family: "Lavishly Yours", cursive;
   font-weight: 400;
   font-size: 5.5rem;
   color: #958161;
 }
-.footer-brand :is(.body-4, .label-1) {
-  color: var(--quick-silver);
-  line-height: var(--lineHeight-3);
-}
-
-.footer-brand .contact-link {
-  margin-block: 6px;
-  transition: var(--transition-1);
-}
 
 .footer-brand .contact-link:is(:hover, :focus-visible) { color: var(--gold-crayola); }
 
-.footer-brand .wrapper {
-  display: flex;
-  justify-content: center;
-  gap: 2px;
-  margin-block: 40px 25px;
-}
-
-.footer-brand .separator { animation: rotate360 15s linear infinite; }
-
 .footer-brand .label-1 { margin-block-end: 30px; }
-
-.footer-brand .label-1 .span {
-  display: inline;
-  color: var(--white);
-}
-
-.footer-brand .icon-wrapper .input-field { cursor: text; }
-
-.footer-brand .btn { min-width: 100%; }
 
 .footer-list {
   display: grid;
-  gap: 20px;
+  gap: 50px;
 }
 
 .footer-link {
-  color: var(--quick-silver);
+  color: var(--gold-crayola);
   font-weight: var(--weight-bold);
   text-transform: uppercase;
   letter-spacing: var(--letterSpacing-4);
@@ -1391,16 +1368,6 @@ a.logo{
   color: var(--quick-silver);
   line-height: var(--lineHeight-3);
 }
-
-.copyright .link {
-  display: inline;
-  color: var(--gold-crayola);
-  text-decoration: underline;
-}
-
-
-
-
 
 /*-----------------------------------*\
   #BACK TO TOP
@@ -2144,6 +2111,14 @@ a.logo{
     bottom: 80px;
     left: 0;
   }
+}
+
+// add style for logo
+a.logo{
+  font-family: "Lavishly Yours", cursive;
+  font-weight: 400;
+  font-size: 5.5rem;
+  color: #958161;
 }
 `;
 
