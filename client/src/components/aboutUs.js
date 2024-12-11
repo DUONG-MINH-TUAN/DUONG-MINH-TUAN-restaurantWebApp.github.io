@@ -1,7 +1,7 @@
 import GlobalStyle from "../assets/globalStyle/home.globalStyle";
 import AboutBanner from "../assets/img/about-banner.jpg";
 import AboutABS from "../assets/img/about-abs-image.jpg";
-function aboutPage(){
+function AboutPage(){
     return (
         // <section>
             
@@ -47,5 +47,5 @@ function aboutPage(){
     
 }
     
-export default aboutPage;
+export default AboutPage;
     

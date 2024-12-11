@@ -1,12 +1,14 @@
-import TTT from '../assets/img/TTT.png'
-function header(){
+
+import { useAuth } from '../context/AuthContext';
+function Header(){
+    const promoteAdmin = useAuth();
     return (
                 
         <header className="header" data-header>
             <div className="container">
 
                 <a href="#" className="logo">
-                    {/* <img src={TTT} width="160" height="50" alt="TTT - Home"/> */}
+                  
                     TTT
                 </a>
         
@@ -15,10 +17,13 @@ function header(){
                             <button className="close-btn" aria-label="close menu" data-nav-toggler>
                                 <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
                             </button>
+                            <div className="text-center">
 
                             <a href="#" className="logo">
-                                <img src={TTT} width="160" height="50" alt="TTT - Home"/>
+                                    
+                                    TTT
                             </a>
+                            </div>
 
                             <ul className="navbar-list">
 
@@ -79,11 +84,17 @@ function header(){
 
                 </nav>
                
+                <a href="#" className="btn btn-secondary">
+                    <span className="text text-1">Promote Admin</span>
+
+                    <span className="text text-2" aria-hidden="true">Promote Admin</span>
+                </a>
+
 
                 <a href="#" className="btn btn-secondary">
-                    <span className="text text-1">Login / Sign-up</span>
+                    <span className="text text-1">Logout</span>
 
-                    <span className="text text-2" aria-hidden="true">Login / Sign-up</span>
+                    <span className="text text-2" aria-hidden="true">Logout</span>
                 </a>
 
                 <button className="nav-open-btn" aria-label="open menu" data-nav-toggler>
@@ -104,4 +115,4 @@ function header(){
 }
 
 
-export default header;
+export default Header;
