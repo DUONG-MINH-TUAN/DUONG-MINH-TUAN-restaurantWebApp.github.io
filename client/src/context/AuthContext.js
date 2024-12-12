@@ -115,8 +115,13 @@ export const AuthProvider = ({ children }) => {
 
     // decode access token and take the payload
     const decodeAccessToken = (accessToken) =>{
+        try{
         const decodedToken = jwtDecode(accessToken);
-        setUser(decodedToken);
+        return decodedToken;
+    } catch(error){
+        console.log("Error in decode the access token in login process: ",error.message);
+        return;
+    }
     }
 
 
@@ -258,7 +263,8 @@ export const AuthProvider = ({ children }) => {
             setIsLoginLoading(true);
             setLoginError(null);
             const response = await axios.post(`${baseUrl}/login`,loginInfor);
-            // console.log('Response:', response);
+            
+            console.log('Response:', response);
             // save the access token into the local storage
             localStorage.setItem("accessToken", response.data.accessToken);
             // localStorage.setItem("expiryDate",response.data.expiryDate);
@@ -267,8 +273,14 @@ export const AuthProvider = ({ children }) => {
            
             
              //decode the payload and set the user  
-             decodeAccessToken(response);
-             setIsLoginLoading(false);
+            const decodedToken = decodeAccessToken(response.data.accessToken);
+            if(!decodedToken){
+                console.log("Error in login process: the decodedToken is null");
+                return;
+            }
+            console.log("decodedToken: ", decodedToken);
+            setUser(decodedToken);
+            setIsLoginLoading(false);
         } catch (error) {
             let errorMessage = 'Unknown error';
             if (error.response) {
@@ -278,7 +290,7 @@ export const AuthProvider = ({ children }) => {
                 // Something went wrong in setting up the request
                 errorMessage = error.message;
             }
-            setLoginError(errorMessage);
+            setLoginError({message: errorMessage});
             setIsLoginLoading(false);
             
         }

@@ -98,12 +98,12 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-// Check missing fields
-if (!email || !password) {
-    return res.status(400).json({
-        error: 'Missing required fields: email, password, confirmed password.',
-    });
-}
+    // Check missing fields
+    if (!email || !password) {
+        return res.status(400).json({
+            error: 'Missing required fields: email, password, confirmed password.',
+        });
+    }
 
     // Sanitize and validate
     const { sanitizedEmail, sanitizedPassword, errors } =
@@ -114,7 +114,11 @@ if (!email || !password) {
     }
         
         const user = await findUserByEmail(sanitizedEmail);
+        if (!user){
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
         const admin = await findAdminById(user.id);
+        console.log(admin);
         // check the admin validity
         if (admin) {
             
@@ -124,22 +128,20 @@ if (!email || !password) {
             const refreshToken = generateRefreshToken(admin);
             
             res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-            console.log('refreshtoken: ', refreshToken);
-            // console.log('accessToken: ',accessToken);
+            console.log('refreshtoken for admin: ', refreshToken);
+            console.log('accessToken for admin: ',accessToken);
 
             // const expiryDate = getTokenExpiry(accessToken);
             // console.log('expiry date of access token: ',expiryDate);
             
-            res.json({ accessToken});
+            return res.json({ accessToken});
             
             
         } 
         
 
         
-        if (!user){
-            return res.status(401).json({ message: 'Invalid email or password' });
-        }
+       
         // check the password validity
             const isPasswordValid = await bcrypt.compare(sanitizedPassword, user.password);
             if (!isPasswordValid) {
@@ -151,14 +153,14 @@ if (!email || !password) {
             const refreshToken = generateRefreshToken(user);
             
             res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-            console.log('refreshtoken: ', refreshToken);
-            console.log('accessToken: ',accessToken);
+            // console.log('refreshtoken: ', refreshToken);
+            // console.log('accessToken: ',accessToken);
 
             // const expiryDate = getTokenExpiry(accessToken);
            
             return res.json({ accessToken});
     } catch (error) {
-        res.status(500).json({ error: error.message });
+       return res.status(500).json({ error: error.message });
     }
 };
 
