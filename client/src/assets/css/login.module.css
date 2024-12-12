@@ -350,4 +350,19 @@ input:placeholder-shown::placeholder {
   }
   
   
-  
+  .loginTemplate .alertSuccess{
+    
+      font-size: 1em;
+      font-weight: 600;
+    background-color: #36ef61;
+    color: #36942f;
+    border: 1px solid #4ebe4e;
+  }
+
+  .loginTemplate
+  .alertSuccess:hover {
+     
+     background-color: #37bf56;
+     border-color: #379037;
+   }
+   

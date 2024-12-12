@@ -11,13 +11,13 @@ exports.generateAccessToken = (user) => {
     if (user.role){
       return jwt.sign({id:user.id,role:user.role},SECRET_KEY,{expiresIn:'2h'});
     }
-    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'2h'});
+    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'1h'});
 }
 
 // API yêu cầu refresh token
 exports.reloadAccessToken = async (req, res) => {
-  console.log('Cookies:', req.cookies);  // Kiểm tra giá trị của cookies
-console.log('Refresh Token:', req.cookies.refreshToken);  // Kiểm tra refresh token cụ thể
+//   console.log('Cookies:', req.cookies);  // Kiểm tra giá trị của cookies
+// console.log('Refresh Token:', req.cookies.refreshToken);  // Kiểm tra refresh token cụ thể
 
     const refreshToken = req.cookies.refreshToken;
     console.log("refreshToken when reloading:   ",refreshToken);

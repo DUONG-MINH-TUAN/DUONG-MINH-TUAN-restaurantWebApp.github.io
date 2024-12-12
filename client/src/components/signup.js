@@ -9,7 +9,7 @@ function SignUp() {
           isRegisterLoading,
           registerUser,
           registerError,
-          setRegisterError} = useAuth(); 
+          registerSuccess,} = useAuth(); 
   const handleSignUp = async (e) => {
     
     try{
@@ -34,6 +34,7 @@ function SignUp() {
                             onChange={(e)=> updateRegisterInfor({...registerInfor, email: e.target.value})}
                             required
                             autoComplete="email"
+                            placeholder="email"
                         />
                         <label htmlFor="">Email</label>
 
@@ -46,6 +47,7 @@ function SignUp() {
                             onChange={(e) => updateRegisterInfor({...registerInfor,password: e.target.value})}
                             required
                             autoComplete="new-password"
+                            placeholder="password"
                         />
                         <label htmlFor="">Password</label>
                     </div>
@@ -57,6 +59,7 @@ function SignUp() {
                             onChange={(e)=>updateRegisterInfor({...registerInfor,confirmedPassword: e.target.value})} 
                             required
                             autoComplete="new-password"
+                            placeholder="confirmedPassword"
                         />
                         <label htmlFor="">Confirmed Password</label>
                     </div>
@@ -77,7 +80,11 @@ function SignUp() {
                       </div>
                       
                         )}
-                       
+                       {registerSuccess && (
+                      <div className={`${styles.alert} ${styles.alertSuccess}`}> 
+                      {registerSuccess.message && <p>{registerSuccess.message}</p>}
+                      </div>                      
+                        )}
                 
                     {/* <!-- create two lines and one word between them --> */}
                     <div className={styles.lineWithText}> 

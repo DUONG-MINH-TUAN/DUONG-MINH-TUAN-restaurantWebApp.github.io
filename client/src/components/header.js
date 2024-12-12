@@ -1,7 +1,7 @@
 
 import { useAuth } from '../context/AuthContext';
 function Header(){
-    const promoteAdmin = useAuth();
+    const {user,promoteAdmin,logout} = useAuth();
     return (
                 
         <header className="header" data-header>
@@ -83,15 +83,16 @@ function Header(){
                             </div>
 
                 </nav>
-               
-                <a href="#" className="btn btn-secondary">
+                {/* check the role of admin to generate the button */}
+                { user && (user.role == "admin") &&(
+                <a onClick={promoteAdmin} className="btn btn-secondary">
                     <span className="text text-1">Promote Admin</span>
 
                     <span className="text text-2" aria-hidden="true">Promote Admin</span>
                 </a>
+                )}
 
-
-                <a href="#" className="btn btn-secondary">
+                <a onClick={logout} className="btn btn-secondary">
                     <span className="text text-1">Logout</span>
 
                     <span className="text text-2" aria-hidden="true">Logout</span>

@@ -3,8 +3,8 @@ function Hero(){
     return (
         // <article>
 
-      <section className="Hero text-center" aria-label="home" id="home">
-            <ul className="Hero-slider" data-hero-slider>
+      <section className="hero text-center" aria-label="home" id="home">
+            <ul className="hero-slider" data-hero-slider>
 
                 <li className="slider-item active" data-hero-slider-item>
 
@@ -12,12 +12,12 @@ function Hero(){
                     <img src={hero1} width="1880" height="950" alt="" className="img-cover"/>
                     </div>
 
-                    <h1 className="display-1 Hero-title slider-reveal">
+                    <h1 className="display-1 hero-title slider-reveal">
                     Customer experience is our <br/>
                     Top priority 
                     </h1>
 
-                    <p className="label-2 Hero-text section-subtitle">
+                    <p className="label-2 hero-text section-subtitle">
                     Where Each Plate Tells A Tale Of Culinary Expertise And Dedicated Artistry
                     </p>
 

@@ -23,12 +23,13 @@ async function findUserByEmail(email) {
 }
 
 
-const findAdminByEmail = async (email) =>{
+
+const findAdminById = async (id) =>{
     try {
         // Truy vấn bảng userinfor để kiểm tra email
         const admin = await prisma.admins.findUnique({
             where: {
-                email: email, // Tìm kiếm theo email
+                user_id: id, // Tìm kiếm theo email
             },
         });
         return admin;
@@ -79,4 +80,4 @@ async function createUser(email,password) {
 
 
 
-module.exports = {findUserByEmail,createUser,findAdminByEmail,getAllUser,};
+module.exports = {findUserByEmail,createUser,findAdminById,getAllUser,};
