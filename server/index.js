@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));  // cho dữ liệu dạng U
 // };
 // app.use(cors(corsOptions));
 
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000' }));
 //login
 //api: localhost:5000/api
 app.use("/api",userController);

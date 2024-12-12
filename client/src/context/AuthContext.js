@@ -4,6 +4,7 @@ import axios from 'axios';
 import DOMPurify from 'dompurify';
 import instance from "../config/axiosInstance";
 import {jwtDecode} from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -25,7 +26,8 @@ export const AuthProvider = ({ children }) => {
     const [registerError, setRegisterError] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
-    
+    const [registerSuccess,setRegisterSuccess]= useState(false); 
+    const navigate = useNavigate();
 
     // TOKEN
     // check expiration for token
@@ -79,14 +81,14 @@ export const AuthProvider = ({ children }) => {
 
     // Automatic checker for token
     useEffect(()=>{
-        
+        // 5 minutes -> check
         const intervalId = setInterval(async() => {
             if (checkExpiration(accessToken)) {
             localStorage.removeItem("accessToken");
             setAccessToken(null);
             await reloadAccessToken();  // if token is expired, reload new access token
         }
-        }, 10000);  
+        }, 300000);  //ms 
     
         // Clean up khi component unmount
         return () => clearInterval(intervalId);
@@ -95,13 +97,27 @@ export const AuthProvider = ({ children }) => {
 
     
     // ADMIN
-    const promoteAdmin = async()=>{
-        
-        const response = instance.post(`${baseUrl}/promote-to-admin`);
+    // Promote admin
+    const promoteAdmin = useCallback(async()=>{
+        if(!user.role || user.role!=="admin"){
+            console.log("You are not authenticated as admin");
+            return;
+        }
+        try{
+        const response = await instance.post(`${baseUrl}/promote-to-admin`);
+        //navigate to PromoteAdminPage
+        navigate("/promote-to-admin",{state:{users: response.data.users}});
+        }catch(error){
+            const errorMessage = error.response?.data?.message || error.message;
+            console.log(errorMessage);
+        }
+    },[user])
 
-
+    // decode access token and take the payload
+    const decodeAccessToken = (accessToken) =>{
+        const decodedToken = jwtDecode(accessToken);
+        setUser(decodedToken);
     }
-    
 
 
     
@@ -125,18 +141,21 @@ export const AuthProvider = ({ children }) => {
             // Validation
             const temp = validateForm(registerInfor.email,registerInfor.password,registerInfor.confirmedPassword);
             if (Object.keys(temp.errors).length > 0) {
-                setRegisterError(temp.errors);  // Đặt lỗi vào state
+                setRegisterError(temp.errors);  
             }
-            console.log(temp.errors);
+            // console.log(temp.errors);
             if (!temp.valid) return;
 
             
 
             setIsRegisterLoading(true);
+            setRegisterError(null);
+            console.log("register infor",registerInfor);
             const response = await axios.post(`${baseUrl}/signup`, registerInfor);
+            console.log(registerError);
             setIsRegisterLoading(false);
+            setRegisterSuccess(true);
 
-            setUser(response);
         } catch (error) {
             let errorMessage = 'Unknown error';
             if (error.response) {
@@ -149,12 +168,12 @@ export const AuthProvider = ({ children }) => {
                 // Something went wrong in setting up the request
                 errorMessage = error.message;
             }
-            setRegisterError(errorMessage);
+            setRegisterError({message: errorMessage});
             setIsRegisterLoading(false);
-            return;
+           
         }
     }, [registerInfor]);
-
+    console.log(registerInfor);
     const updateLoginInfor = (infor) => {
         setLoginInfor(infor);
     }
@@ -216,6 +235,8 @@ export const AuthProvider = ({ children }) => {
     const logout = useCallback( async() => {
         localStorage.removeItem("accessToken");
         setAccessToken(null);
+        setLoginError(null);
+        setRegisterError(null);
         await axios.post(`${baseUrl}/logout`);
     }, [])
 
@@ -224,7 +245,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const temp = validateForm(loginInfor.email,loginInfor.password);
             if (Object.keys(temp.errors).length > 0) {
-                setLoginError(temp.errors);  // Đặt lỗi vào state
+                setLoginError(temp.errors);  
             }
             console.log(temp.errors);
             if (!temp.valid) return;
@@ -236,29 +257,30 @@ export const AuthProvider = ({ children }) => {
             }
             setIsLoginLoading(true);
             setLoginError(null);
-            const response = await axios.post(`${baseUrl}/login`,loginInfor); 
-            
+            const response = await axios.post(`${baseUrl}/login`,loginInfor);
+            // console.log('Response:', response);
             // save the access token into the local storage
             localStorage.setItem("accessToken", response.data.accessToken);
             // localStorage.setItem("expiryDate",response.data.expiryDate);
             setAccessToken(response.data.accessToken);
             // setExpiryDate(response.data.expiryDate);
-            setIsLoginLoading(false);
+           
+            
+             //decode the payload and set the user  
+             decodeAccessToken(response);
+             setIsLoginLoading(false);
         } catch (error) {
             let errorMessage = 'Unknown error';
             if (error.response) {
                 // Server returned a response with error code
                 errorMessage = error.response?.data?.message || error.message;
-            } else if (error.request) {
-                // No response from server, possibly network issues
-                errorMessage = 'No Internet';
-            } else {
+            } else  {
                 // Something went wrong in setting up the request
                 errorMessage = error.message;
             }
             setLoginError(errorMessage);
             setIsLoginLoading(false);
-            return;
+            
         }
     }, [loginInfor])
 
@@ -280,7 +302,10 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated,
             isAuthenticated,
             setRegisterError,
-            accessToken,    
+            accessToken, 
+            promoteAdmin,   
+            registerSuccess,
+            setRegisterSuccess,
         }}>
             {children}
         </AuthContext.Provider>

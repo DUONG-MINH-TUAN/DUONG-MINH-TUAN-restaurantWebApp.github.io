@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { findUserByEmail, createUser,findAdminByEmail, } = require('../Models/User.model');
+const { findUserByEmail, createUser,findAdminById, } = require('../Models/User.model');
 const {generateAccessToken,generateRefreshToken} = require('./Auth.services');
 const DOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
@@ -112,55 +112,51 @@ if (!email || !password) {
     if (Object.keys(errors).length > 0) {
         return res.status(400).json({ errors });
     }
-        // find user through email
+        
         const user = await findUserByEmail(sanitizedEmail);
-    
-        // check the user validity
-        if (!user) {
+        const admin = await findAdminById(user.id);
+        // check the admin validity
+        if (admin) {
             
-            const admin = await findAdminByEmail(sanitizedEmail);
-            if (!admin){
-                return res.status(401).json({ message: 'Invalid email or password' });
-            }
-            // check the password validity
-                const isPasswordValid = await bcrypt.compare(sanitizedPassword, user.password);
-                if (!isPasswordValid) {
-                    return res.status(401).json({ message: 'Incorrect password' });
-                }
 
-                //create two tokens
-                const accessToken = generateAccessToken(user);
-                const refreshToken = generateRefreshToken(user);
-                
-                res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-                console.log('refreshtoken: ', refreshToken);
-                // console.log('accessToken: ',accessToken);
+            //create two tokens
+            const accessToken = generateAccessToken(admin);
+            const refreshToken = generateRefreshToken(admin);
+            
+            res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+            console.log('refreshtoken: ', refreshToken);
+            // console.log('accessToken: ',accessToken);
 
-                // const expiryDate = getTokenExpiry(accessToken);
-               
-                return res.json({ accessToken});
+            // const expiryDate = getTokenExpiry(accessToken);
+            // console.log('expiry date of access token: ',expiryDate);
+            
+            res.json({ accessToken});
+            
+            
         } 
         
 
-        // check the password validity
-        const isPasswordValid = await bcrypt.compare(sanitizedPassword, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Incorrect password' });
+        
+        if (!user){
+            return res.status(401).json({ message: 'Invalid email or password' });
         }
+        // check the password validity
+            const isPasswordValid = await bcrypt.compare(sanitizedPassword, user.password);
+            if (!isPasswordValid) {
+                return res.status(401).json({ message: 'Incorrect password' });
+            }
 
-        //create two tokens
-        const accessToken = generateAccessToken(user);
-        const refreshToken = generateRefreshToken(user);
-        
-        res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-        console.log('refreshtoken: ', refreshToken);
-        // console.log('accessToken: ',accessToken);
+            //create two tokens
+            const accessToken = generateAccessToken(user);
+            const refreshToken = generateRefreshToken(user);
+            
+            res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+            console.log('refreshtoken: ', refreshToken);
+            console.log('accessToken: ',accessToken);
 
-        // const expiryDate = getTokenExpiry(accessToken);
-        // console.log('expiry date of access token: ',expiryDate);
-        
-        res.json({ accessToken});
-
+            // const expiryDate = getTokenExpiry(accessToken);
+           
+            return res.json({ accessToken});
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
