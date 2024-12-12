@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            padding: 20px;
+            margin-right: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+
+        .sidebar .spacer {
+            height: 200px;
+        }
+
+        .sidebar .logout {
+            color: red;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .add-button {
+            background-color: #f1c40f;
+            color: white;
+            border: none;
+            padding: 15px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+        }
+
+        .add-button:hover {
+            background-color: #d4ac0d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #f4f4f4;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        th:hover {
+            background-color: #eaeaea;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        select {
+            padding: 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="user_management.html">Users</a>
+        <a href="food_management.html">Items</a>
+        <a href="#">Tables</a>
+        <a href="#">Message</a>
+        <div class="spacer"></div>
+        <a href="#" class="settings">Setting</a>
+        <a href="#" class="logout">Logout</a>
+    </div>
+
+    <div class="dashboard">
+        <button class="add-button" onclick="addNewUser()">Add New Food</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Images</th>
+                    <th>Name</th>
+                    <th>Prices</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><img class="avatar" src="https://via.placeholder.com/40" alt="Avatar"></td>
+                    <td>Bread</td>
+                    <td>$12.99</td>
+                    <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><img class="avatar" src="https://via.placeholder.com/40" alt="Avatar"></td>
+                    <td>Rice</td>
+                    <td>$12.99</td>
+                    <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><img class="avatar" src="https://via.placeholder.com/40" alt="Avatar"></td>
+                    <td>Wine</td>
+                    <td>$12.99</td>
+                    <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+        }
+
+        function addNewUser() {
+            const table = document.querySelector('table tbody');
+            const rowCount = table.rows.length + 1;
+
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                <td><img class="avatar" src="https://via.placeholder.com/40" alt="Avatar"></td>
+                <td>New User</td>
+                <td>
+                    <select>
+                        <option>Admin</option>
+                        <option>Customer</option>
+                    </select>
+                </td>
+                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+            `;
+
+            table.appendChild(newRow);
+        }
+    </script>
+</body>
+</html>
+
