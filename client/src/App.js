@@ -25,6 +25,7 @@ function App() {
     }
   }, [registerSuccess, navigate]); // Trigger when registerSuccess changes
 
+  //tự động setUser khi truy cập đường dẫn này (bao gồm việc reload page)
   useEffect(() => {
     if(location.pathname === "/"){
       if (accessToken) {

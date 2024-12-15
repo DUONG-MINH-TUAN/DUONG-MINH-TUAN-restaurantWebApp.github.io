@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { findUserByEmail, createUser,findAdminById,deleteUser, } = require('../Models/User.model');
+const { findUserByEmail, createUser,findAdminById,deleteUser,getAllUser, } = require('../Models/User.model');
 const {generateAccessToken,generateRefreshToken} = require('./Auth.services');
 const DOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
@@ -198,12 +198,12 @@ exports.deleteUserIds = async(req,res) =>{
        }
         const authHeader = req.headers["authorization"];
             if(!authHeader){
-              console.log("Error in executing promote admin in admin.services: there is no auth header");
+              console.log("Error in deleting the users in user.services: there is no auth header");
         
             }
             const accessToken = authHeader && authHeader.split(" ")[1];
             if (!accessToken) {
-              console.log("Error in executing promote admin in admin.services: there is no access token");
+              console.log("Error in deleting the users in user.services: there is no access token");
               return res.status(401).json({message: "No token provided"});
             }
             
@@ -229,4 +229,43 @@ exports.deleteUserIds = async(req,res) =>{
         console.error('Error deleting users in service:', error);
         return { message: 'An error occurred while deleting users in service.' };
     }
+}
+
+
+exports.getAllUsers = async(req,res) => {
+    try {
+        const authHeader = req.headers["authorization"];
+    if(!authHeader){
+      console.log("Error in get all users in user.services: there is no auth header");
+
+    }
+    const accessToken = authHeader && authHeader.split(" ")[1];
+    if (!accessToken) {
+      console.log("Error in get all users in user.services: there is no access token");
+      return res.status(401).json({message: "No token provided"});
+    }
+    
+    //verify the access token expiration
+    jwt.verify(accessToken, SECRET_KEY, (err, user) => {
+      if (err) {
+        return res.status(403).json({message: "Invalid access token"});
+      }
+    });
+
+    const payload = jwt.decode(accessToken);
+    // check role
+    if (!payload.role || payload.role!=="admin"){
+      return res.status(403).json({message: "Not authorized as admin"});
+    }
+    const users = await getAllUser();
+    if (!users){
+        return res.status(404).json("Users not found");
+    }
+    return res.status(200).json({users: users,message: "Get all users successfully!!!"});
+    } catch (error) {
+        console.error('Error deleting users in service:', error);
+        return { message: 'An error occurred while deleting users in service.' };
+    }
+    
+
 }

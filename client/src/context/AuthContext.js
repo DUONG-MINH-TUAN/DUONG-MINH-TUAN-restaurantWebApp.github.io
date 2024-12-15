@@ -35,14 +35,11 @@ export const AuthProvider = ({ children }) => {
             userList: []
         }
     );
-    useEffect(() => {
-        console.log("deleteQueue updated:", deleteQueue); // In ra giá trị mới của deleteQueue
-    }, [deleteQueue]); // Khi deleteQueue thay đổi, console.log sẽ được gọi
+    
 
     // TOKEN
-    
     // decode access token and take the payload
-    const decodeAccessToken = (accessToken) =>{
+    const decodeAccessToken = useCallback((accessToken) =>{
         try{
         const decodedToken = jwtDecode(accessToken);
         return decodedToken;
@@ -50,9 +47,9 @@ export const AuthProvider = ({ children }) => {
         console.log("Error in decode the access token in login process: ",error.message);
         return;
     }
-    }
+    },[])
     // check expiration for token
-    const checkExpiration = (token) =>{
+    const checkExpiration = useCallback((token) =>{
         if (!token) {
             console.log("No access token ");
             return false;
@@ -68,8 +65,8 @@ export const AuthProvider = ({ children }) => {
             return true; 
         }
         
-    }
-    console.log("access token",accessToken);
+    },[]);
+    
     
     //reload access token based on refresh token
     const reloadAccessToken = async ()=>{
@@ -118,8 +115,8 @@ export const AuthProvider = ({ children }) => {
 
     
     // ADMIN
-    // Promote admin
-    const promoteAdmin = useCallback(async()=>{
+    // Promote admin but get All users and verify
+    const promoteAdminButGet = useCallback(async()=>{
         try{
         const response = await instance.get(`${baseUrl}/protected/promote-to-admin`);
         
@@ -143,6 +140,22 @@ export const AuthProvider = ({ children }) => {
         }
     },[user,setUsers])
 
+    const promoteAdminReal = async(userId) =>{
+        try {
+            if (!userId){
+                console.log("Error in promote admin real in auth context: no found user id");
+                return;
+            }
+            const response = await instance.post(`${baseUrl}/protected/promote-to-admin-real`,{userId});
+            if(!response){
+                console.log("There is no response in promote admin real in auth context");
+                return;
+            }
+            return response.data.newAdmin;
+        } catch (error) {
+            console.log("Error in promote admin real in auth context: ",error.message);
+        }
+    }
 
 
     useEffect(() => {
@@ -335,10 +348,19 @@ export const AuthProvider = ({ children }) => {
         
     }
 
-    const getAllUsers = async() =>{
-        const response = await instance.get(`${baseUrl}/protected/get-all-users`);
-
-    }
+    const getAllUsers = useCallback(async() =>{
+        try {
+            const response = await instance.get(`${baseUrl}/protected/get-all-users`);
+            if(!response.data.users){
+                console.log("There is no users found in get all users in auth context");
+                return;
+            }
+            return response.data.users;
+        } catch (error) {
+            console.log("Error in getting all users in auth context: ", error.message);
+        }
+        
+    },[])
 
     return (
         <AuthContext.Provider value={{
@@ -356,8 +378,7 @@ export const AuthProvider = ({ children }) => {
             isRegisterLoading,
             updateRegisterInfor,
             setRegisterError,
-            accessToken, 
-            promoteAdmin,   
+            accessToken,  
             registerSuccess,
             setRegisterSuccess,
             users,
@@ -365,6 +386,8 @@ export const AuthProvider = ({ children }) => {
             setUsers,
             deleteQueue,
             setDeleteQueue,
+            getAllUsers,
+            promoteAdminButGet,
         }}>
             {children}
         </AuthContext.Provider>

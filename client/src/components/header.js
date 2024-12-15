@@ -2,13 +2,13 @@
 import { useAuth } from '../context/AuthContext';
 import {useNavigate} from "react-router-dom";
 function Header(){
-    const {user,promoteAdmin,logout} = useAuth();
+    const {user,promoteAdminButGet,logout} = useAuth();
     
     const navigate = useNavigate();
 
     const handlePromoteAdmin = async (e)=>{
         e.preventDefault();
-        await promoteAdmin();
+        await promoteAdminButGet();
         //navigate to PromoteAdminPage
         navigate("/manage-user");
     }

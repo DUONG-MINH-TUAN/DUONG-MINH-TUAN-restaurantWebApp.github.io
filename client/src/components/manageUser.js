@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import GlobalStyle from "../assets/globalStyle/manageUser.globalStyle";
 export default function ManageUser() {
-    const {users,deleteUsers,setUsers,deleteQueue,setDeleteQueue} = useAuth();
+    const {users,deleteUsers,setUsers,deleteQueue,setDeleteQueue,getAllUsers} = useAuth();
     
     //configure toast
     // toast.configure();
@@ -46,9 +46,9 @@ export default function ManageUser() {
     const handleDeleteAll = async () => {
         
         try {
-            deleteQueue.map((user) =>{
-                deleteRow(user.id);
-            })
+            // deleteQueue.map((user) =>{
+            //     deleteRow(user.id);
+            // })
             const response = await deleteUsers(deleteQueue);
             
             if(!response){
@@ -61,13 +61,18 @@ export default function ManageUser() {
             }else {
                 toast.error(response.message||"No users found with the provided IDs!!!");
             }    
+            const users = await getAllUsers();
+            setUsers({userList: users});
+            sessionStorage.setItem('users',users);
         } catch (error) {
             console.error("Error deleting users in UI:", error);
       toast.error("An error occurred while deleting users.");
         }
         
     };
-
+    const handlePromoteAdmin = async() =>{
+      
+    }
   return (
     <div className="row">
       <GlobalStyle />
