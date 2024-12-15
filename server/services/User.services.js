@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { findUserByEmail, createUser,findAdminById, } = require('../Models/User.model');
+const { findUserByEmail, createUser,findAdminById,deleteUser, } = require('../Models/User.model');
 const {generateAccessToken,generateRefreshToken} = require('./Auth.services');
 const DOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
@@ -188,3 +188,45 @@ exports.getUserDetails= (req,res) =>{
     res.send("This is a protected route");
   });
 }   
+
+
+exports.deleteUserIds = async(req,res) =>{
+    try {
+        const userIds = req.body;
+       if(!userIds){
+            return res.status(403).json({success:false,message: "There is no selected users"});
+       }
+        const authHeader = req.headers["authorization"];
+            if(!authHeader){
+              console.log("Error in executing promote admin in admin.services: there is no auth header");
+        
+            }
+            const accessToken = authHeader && authHeader.split(" ")[1];
+            if (!accessToken) {
+              console.log("Error in executing promote admin in admin.services: there is no access token");
+              return res.status(401).json({message: "No token provided"});
+            }
+            
+            //verify the access token expiration
+            jwt.verify(accessToken, SECRET_KEY, (err, user) => {
+              if (err) {
+                return res.status(403).json({message: "Invalid access token"});
+              }
+            });
+        
+            const payload = jwt.decode(accessToken);
+            // check role
+            if (!payload.role || payload.role!=="admin"){
+              return res.status(403).json({message: "Not authorized as admin"});
+            }
+            const resultMessage = await deleteUser(userIds);
+            if(!resultMessage.success){
+                return res.status(403).json({success:resultMessage.success,message: resultMessage.message});
+            }else {
+                return res.status(200).json({success:resultMessage.success,message: resultMessage.message});
+            }
+    } catch (error) {
+        console.error('Error deleting users in service:', error);
+        return { message: 'An error occurred while deleting users in service.' };
+    }
+}

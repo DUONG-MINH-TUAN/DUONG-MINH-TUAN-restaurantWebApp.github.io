@@ -6,15 +6,20 @@ require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
 
 
-exports.promoteAdmin = (req,res) =>{
+exports.promoteAdmin = async (req,res) =>{
+  try{
     const authHeader = req.headers["authorization"];
+    if(!authHeader){
+      console.log("Error in executing promote admin in admin.services: there is no auth header");
+
+    }
     const accessToken = authHeader && authHeader.split(" ")[1];
-    
-    if (!token) {
+    if (!accessToken) {
+      console.log("Error in executing promote admin in admin.services: there is no access token");
       return res.status(401).json({message: "No token provided"});
     }
     
-    //verify the token expiration
+    //verify the access token expiration
     jwt.verify(accessToken, SECRET_KEY, (err, user) => {
       if (err) {
         return res.status(403).json({message: "Invalid access token"});
@@ -26,11 +31,13 @@ exports.promoteAdmin = (req,res) =>{
     if (!payload.role || payload.role!=="admin"){
       return res.status(403).json({message: "Not authorized as admin"});
     }
-    const users = getAllUser();
+    const users = await getAllUser();
     if(!users){
       return res.status(500).json({message: "No found user"});
     }
-
+    console.log("Users when send request to promote admin: ",users);
     return res.status(200).json(users);
-
+  }catch(error){
+    console.log("Error in executing promote admin in admin.services: ",error.message)
+  }
 }
