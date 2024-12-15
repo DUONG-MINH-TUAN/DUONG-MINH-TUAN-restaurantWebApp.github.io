@@ -24,7 +24,7 @@
   .loginTemplate .formBox{
     position: relative;
     width: 400px;
-    height: 630px;
+    height: 580px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 20px;
@@ -37,7 +37,7 @@
   .formBox.registerBox{
     position: relative;
     width: 400px;
-    height: 650px;
+    height: 600px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 20px;
@@ -74,37 +74,38 @@
     transition: top 0.3s ease, font-size 0.3s ease;
   }
   /* Khi input có giá trị, ẩn placeholder */
+.loginTemplate
 input:not(:placeholder-shown) {
   color: transparent; /* Đặt màu chữ của placeholder thành transparent (vô hình) */
 }
-
+.loginTemplate
 /* Hoặc nếu bạn muốn placeholder biến mất hoàn toàn khi có giá trị, có thể sử dụng: */
 input:not(:placeholder-shown)::-webkit-input-placeholder {
   visibility: hidden; /* Ẩn placeholder trong trường hợp input có giá trị */
 }
-
+.loginTemplate
 input:not(:placeholder-shown):-ms-input-placeholder {
   visibility: hidden; /* Ẩn placeholder cho IE */
 }
-
+.loginTemplate
 input:not(:placeholder-shown)::placeholder {
   visibility: hidden; /* Ẩn placeholder cho các trình duyệt hiện đại */
 }
-
+.loginTemplate
 /* Khi input có giá trị, ẩn placeholder */
 input:placeholder-shown {
   color: transparent; /* Đặt màu chữ của placeholder thành transparent (vô hình) */
 }
-
+.loginTemplate
 /* Hoặc nếu bạn muốn placeholder biến mất hoàn toàn khi có giá trị, có thể sử dụng: */
 input:placeholder-shown::-webkit-input-placeholder {
   visibility: hidden; /* Ẩn placeholder trong trường hợp input có giá trị */
 }
-
+.loginTemplate
 input:placeholder-shown:-ms-input-placeholder {
   visibility: hidden; /* Ẩn placeholder cho IE */
 }
-
+.loginTemplate
 input:placeholder-shown::placeholder {
   visibility: hidden; /* Ẩn placeholder cho các trình duyệt hiện đại */
 }

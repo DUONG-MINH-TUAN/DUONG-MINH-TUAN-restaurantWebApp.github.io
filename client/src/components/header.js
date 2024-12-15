@@ -1,7 +1,17 @@
 
 import { useAuth } from '../context/AuthContext';
+import {useNavigate} from "react-router-dom";
 function Header(){
     const {user,promoteAdmin,logout} = useAuth();
+    
+    const navigate = useNavigate();
+
+    const handlePromoteAdmin = async (e)=>{
+        e.preventDefault();
+        await promoteAdmin();
+        //navigate to PromoteAdminPage
+        navigate("/manage-user");
+    }
     return (
                 
         <header className="header" data-header>
@@ -85,7 +95,7 @@ function Header(){
                 </nav>
                 {/* check the role of admin to generate the button */}
                 { user && (user.role == "admin") &&(
-                <a onClick={promoteAdmin} className="btn btn-secondary">
+                <a onClick={handlePromoteAdmin} className="btn btn-secondary">
                     <span className="text text-1">Promote Admin</span>
 
                     <span className="text text-2" aria-hidden="true">Promote Admin</span>

@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { findUserByEmail, createUser,findAdminById, } = require('../Models/User.model');
+const { findUserByEmail, createUser,findAdminById,deleteUser, } = require('../Models/User.model');
 const {generateAccessToken,generateRefreshToken} = require('./Auth.services');
 const DOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
@@ -98,12 +98,12 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-// Check missing fields
-if (!email || !password) {
-    return res.status(400).json({
-        error: 'Missing required fields: email, password, confirmed password.',
-    });
-}
+    // Check missing fields
+    if (!email || !password) {
+        return res.status(400).json({
+            error: 'Missing required fields: email, password, confirmed password.',
+        });
+    }
 
     // Sanitize and validate
     const { sanitizedEmail, sanitizedPassword, errors } =
@@ -114,7 +114,11 @@ if (!email || !password) {
     }
         
         const user = await findUserByEmail(sanitizedEmail);
+        if (!user){
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
         const admin = await findAdminById(user.id);
+        console.log(admin);
         // check the admin validity
         if (admin) {
             
@@ -124,22 +128,20 @@ if (!email || !password) {
             const refreshToken = generateRefreshToken(admin);
             
             res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-            console.log('refreshtoken: ', refreshToken);
-            // console.log('accessToken: ',accessToken);
+            console.log('refreshtoken for admin: ', refreshToken);
+            console.log('accessToken for admin: ',accessToken);
 
             // const expiryDate = getTokenExpiry(accessToken);
             // console.log('expiry date of access token: ',expiryDate);
             
-            res.json({ accessToken});
+            return res.json({ accessToken});
             
             
         } 
         
 
         
-        if (!user){
-            return res.status(401).json({ message: 'Invalid email or password' });
-        }
+       
         // check the password validity
             const isPasswordValid = await bcrypt.compare(sanitizedPassword, user.password);
             if (!isPasswordValid) {
@@ -151,14 +153,14 @@ if (!email || !password) {
             const refreshToken = generateRefreshToken(user);
             
             res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-            console.log('refreshtoken: ', refreshToken);
-            console.log('accessToken: ',accessToken);
+            // console.log('refreshtoken: ', refreshToken);
+            // console.log('accessToken: ',accessToken);
 
             // const expiryDate = getTokenExpiry(accessToken);
            
             return res.json({ accessToken});
     } catch (error) {
-        res.status(500).json({ error: error.message });
+       return res.status(500).json({ error: error.message });
     }
 };
 
@@ -186,3 +188,45 @@ exports.getUserDetails= (req,res) =>{
     res.send("This is a protected route");
   });
 }   
+
+
+exports.deleteUserIds = async(req,res) =>{
+    try {
+        const userIds = req.body;
+       if(!userIds){
+            return res.status(403).json({success:false,message: "There is no selected users"});
+       }
+        const authHeader = req.headers["authorization"];
+            if(!authHeader){
+              console.log("Error in executing promote admin in admin.services: there is no auth header");
+        
+            }
+            const accessToken = authHeader && authHeader.split(" ")[1];
+            if (!accessToken) {
+              console.log("Error in executing promote admin in admin.services: there is no access token");
+              return res.status(401).json({message: "No token provided"});
+            }
+            
+            //verify the access token expiration
+            jwt.verify(accessToken, SECRET_KEY, (err, user) => {
+              if (err) {
+                return res.status(403).json({message: "Invalid access token"});
+              }
+            });
+        
+            const payload = jwt.decode(accessToken);
+            // check role
+            if (!payload.role || payload.role!=="admin"){
+              return res.status(403).json({message: "Not authorized as admin"});
+            }
+            const resultMessage = await deleteUser(userIds);
+            if(!resultMessage.success){
+                return res.status(403).json({success:resultMessage.success,message: resultMessage.message});
+            }else {
+                return res.status(200).json({success:resultMessage.success,message: resultMessage.message});
+            }
+    } catch (error) {
+        console.error('Error deleting users in service:', error);
+        return { message: 'An error occurred while deleting users in service.' };
+    }
+}

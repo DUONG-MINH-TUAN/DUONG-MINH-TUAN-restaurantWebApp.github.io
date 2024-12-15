@@ -69,13 +69,13 @@ function Login() {
                           
                           {loginError && (
                             <div className={`${styles.alert} ${styles.alertDanger}`}> 
-                            {/* {loginError.message &&  
+                            {loginError.message &&  
                                 loginError.message.split('\n').map((line, index) => (
                                           <p key={index}>{line}</p>  
                                     )
                                   )
                                 
-                              } */}
+                              }
                               {loginError.email && <p>{loginError.email}</p>}
                                 {loginError.password && <p>{loginError.password}</p>}
                             </div>
@@ -93,10 +93,10 @@ function Login() {
                           </p>
                           
                         </div>
-                        <button className={styles.googleButton}>
+                        {/* <button className={styles.googleButton}>
                           <img src={logoGoogle} alt="" />
                           Sign In with Google
-                        </button>
+                        </button> */}
                 </form>
                 
               {/* </div> */}

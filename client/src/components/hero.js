@@ -1,5 +1,11 @@
 import hero1 from "../assets/img/hero-1.png"
+import {useNavigate} from "react-router-dom";
 function Hero(){
+    const navigate = useNavigate();
+    const handleOrder = (e) => {
+        e.preventDefault();
+        navigate("/cart");
+    }
     return (
         // <article>
 
@@ -21,7 +27,7 @@ function Hero(){
                     Where Each Plate Tells A Tale Of Culinary Expertise And Dedicated Artistry
                     </p>
 
-                    <a href="#" className="btn btn-primary slider-reveal">
+                    <a onClick={handleOrder} className="btn btn-primary slider-reveal">
                     <span className="text text-1">Order Now</span>
 
                     <span className="text text-2" aria-hidden="true">Order Now</span>

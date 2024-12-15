@@ -10,6 +10,7 @@ const AuthContext = createContext();
 
 
 export const AuthProvider = ({ children }) => {
+    const [deleteQueue, setDeleteQueue,] = useState([]);
     const [loginInfor, setLoginInfor] = useState({
         email: "",
         password: ""
@@ -24,12 +25,32 @@ export const AuthProvider = ({ children }) => {
     });
     const [isRegisterLoading, setIsRegisterLoading] = useState(false);
     const [registerError, setRegisterError] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
     const [registerSuccess,setRegisterSuccess]= useState(false); 
-    const navigate = useNavigate();
+
+    // Used for promote-to-admin
+    const [users,setUsers] = useState(
+        {
+            userList: []
+        }
+    );
+    useEffect(() => {
+        console.log("deleteQueue updated:", deleteQueue); // In ra giá trị mới của deleteQueue
+    }, [deleteQueue]); // Khi deleteQueue thay đổi, console.log sẽ được gọi
 
     // TOKEN
+    
+    // decode access token and take the payload
+    const decodeAccessToken = (accessToken) =>{
+        try{
+        const decodedToken = jwtDecode(accessToken);
+        return decodedToken;
+    } catch(error){
+        console.log("Error in decode the access token in login process: ",error.message);
+        return;
+    }
+    }
     // check expiration for token
     const checkExpiration = (token) =>{
         if (!token) {
@@ -99,27 +120,34 @@ export const AuthProvider = ({ children }) => {
     // ADMIN
     // Promote admin
     const promoteAdmin = useCallback(async()=>{
-        if(!user.role || user.role!=="admin"){
-            console.log("You are not authenticated as admin");
+        try{
+        const response = await instance.get(`${baseUrl}/protected/promote-to-admin`);
+        
+       
+        if(!response){
+            console.log("Error in executing promoteAdmin function: ");
+            console.log("Response in executing promoteAdmin function: ",response);
             return;
         }
-        try{
-        const response = await instance.post(`${baseUrl}/promote-to-admin`);
-        //navigate to PromoteAdminPage
-        navigate("/promote-to-admin",{state:{users: response.data.users}});
+        console.log("Response in promote admin: ",response)
+        console.log("Response data: ", response.data);
+        console.log("Response data length: ", response.data.length);
+
+        setUsers({userList: response.data});
+        sessionStorage.setItem('users', JSON.stringify({userList: response.data}));
+        return;
         }catch(error){
             const errorMessage = error.response?.data?.message || error.message;
             console.log(errorMessage);
+            return;
         }
-    },[user])
-
-    // decode access token and take the payload
-    const decodeAccessToken = (accessToken) =>{
-        const decodedToken = jwtDecode(accessToken);
-        setUser(decodedToken);
-    }
+    },[user,setUsers])
 
 
+
+    useEffect(() => {
+        console.log("Users state updated: ", users);
+    }, [users]);
     
     // SERVER
     // server checker
@@ -134,7 +162,9 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-
+    useEffect(()=>{
+        console.log("User: ",user);
+    },[user])
     // USER
     const registerUser = useCallback(async () => {
         try {
@@ -258,7 +288,8 @@ export const AuthProvider = ({ children }) => {
             setIsLoginLoading(true);
             setLoginError(null);
             const response = await axios.post(`${baseUrl}/login`,loginInfor);
-            // console.log('Response:', response);
+            
+            console.log('Response:', response);
             // save the access token into the local storage
             localStorage.setItem("accessToken", response.data.accessToken);
             // localStorage.setItem("expiryDate",response.data.expiryDate);
@@ -267,8 +298,14 @@ export const AuthProvider = ({ children }) => {
            
             
              //decode the payload and set the user  
-             decodeAccessToken(response);
-             setIsLoginLoading(false);
+            const decodedToken = decodeAccessToken(response.data.accessToken);
+            if(!decodedToken){
+                console.log("Error in login process: the decodedToken is null");
+                return;
+            }
+            console.log("decodedToken: ", decodedToken);
+            setUser(decodedToken);
+            setIsLoginLoading(false);
         } catch (error) {
             let errorMessage = 'Unknown error';
             if (error.response) {
@@ -278,16 +315,35 @@ export const AuthProvider = ({ children }) => {
                 // Something went wrong in setting up the request
                 errorMessage = error.message;
             }
-            setLoginError(errorMessage);
+            setLoginError({message: errorMessage});
             setIsLoginLoading(false);
             
         }
     }, [loginInfor])
+    const deleteUsers = async (deleteQueue) =>{
+        try {
+            const response = await instance.post(`${baseUrl}/protected/delete-users`,deleteQueue);
+            if (!response) {
+                console.log("There is no response from api endpoint of delete route");
+                return;
+            }
+            console.log("The successfull message: ", response.data.message);
+            return response.data;
+        } catch (error) {
+            console.log("There is error in deleting users in auth context:",error);
+        }
+        
+    }
 
+    const getAllUsers = async() =>{
+        const response = await instance.get(`${baseUrl}/protected/get-all-users`);
+
+    }
 
     return (
         <AuthContext.Provider value={{
             user,
+            setUser,
             login,
             logout,
             updateLoginInfor,
@@ -299,13 +355,16 @@ export const AuthProvider = ({ children }) => {
             registerInfor,
             isRegisterLoading,
             updateRegisterInfor,
-            setIsAuthenticated,
-            isAuthenticated,
             setRegisterError,
             accessToken, 
             promoteAdmin,   
             registerSuccess,
             setRegisterSuccess,
+            users,
+            deleteUsers,
+            setUsers,
+            deleteQueue,
+            setDeleteQueue,
         }}>
             {children}
         </AuthContext.Provider>

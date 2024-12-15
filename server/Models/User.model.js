@@ -47,6 +47,7 @@ const findAdminById = async (id) =>{
 const getAllUser = async() => {
     try{
         const users = await prisma.userinfor.findMany();
+        console.log("Users in get all users: ",users);
         return users;
     }catch(error){
         console.log("Errors in get all users: ",error);
@@ -79,5 +80,25 @@ async function createUser(email,password) {
 }
 
 
+const deleteUser = async (userIds) => {
+    try {
+        const result = await prisma.userinfor.deleteMany({
+            where: {
+                id: {
+                    in: userIds,
+                }
+            }
+        });
+         // Kiểm tra xem có bao nhiêu người dùng bị xóa
+        if (result.count > 0) {
+            return { success: true, message: `${result.count} users deleted successfully.` };
+        } else {
+            return { success: false, message: 'No users found with the provided IDs.' };
+        }
+    } catch (error) {
+        console.error('Error deleting users:', error);
+         return { success: false, message: 'An error occurred while deleting users.' };
+  }
+}
 
-module.exports = {findUserByEmail,createUser,findAdminById,getAllUser,};
+module.exports = {findUserByEmail,createUser,findAdminById,getAllUser,deleteUser,};

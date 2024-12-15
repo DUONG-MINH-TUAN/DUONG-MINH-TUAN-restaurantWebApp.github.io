@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {login, signup,logout} = require('../services/User.services');
+const {login, signup,logout, deleteUserIds} = require('../services/User.services');
 const {promoteAdmin} = require('../services/Admin.services');
 const {reloadAccessToken} = require('../services/Auth.services');
 router.post('/login', login);
@@ -18,5 +18,8 @@ router.get('/refresh',reloadAccessToken);
 //protected route
 //use token to take the username of user
 router.get('/protected/promote-to-admin',promoteAdmin);
+
+// use token to delete the user
+router.post('/protected/delete-users',deleteUserIds);
 
 module.exports = router;

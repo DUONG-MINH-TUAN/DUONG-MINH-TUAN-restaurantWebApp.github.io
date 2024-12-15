@@ -99,10 +99,10 @@ function SignUp() {
                       
                     </div>
                     
-                    <button className={styles.googleButton}> 
+                    {/* <button className={styles.googleButton}> 
                             <img src={logoGoogle} alt=""/>
                             Sign In with Google
-                    </button>    
+                    </button>     */}
 
                 </form>
 
