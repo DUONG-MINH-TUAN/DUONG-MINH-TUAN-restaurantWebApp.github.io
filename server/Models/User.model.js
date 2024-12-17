@@ -24,26 +24,6 @@ async function findUserByEmail(email) {
 
 
 
-const findAdminById = async (id) =>{
-    try {
-        // Truy vấn bảng userinfor để kiểm tra email
-        const admin = await prisma.admins.findUnique({
-            where: {
-                user_id: id, // Tìm kiếm theo email
-            },
-        });
-        return admin;
-    } catch (error) {
-        
-        console.error("Error in finding admin by id: ", error);
-        throw error;
-    } finally {
-        // Đảm bảo đóng kết nối Prisma Client sau khi sử dụng
-        await prisma.$disconnect();
-    }
-}
-
-
 const findUserById = async (id) =>{
     try {
         // Truy vấn bảng userinfor để kiểm tra email
@@ -76,22 +56,7 @@ const getAllUser = async() => {
     }
 }
 
-const promoteUserToAdmin  = async(userId) =>{
-    try {
-        const user = await findUserById(userId);
-        const newAdmin = await prisma.admins.create({
-            data:{
-                user_id : user.id,
-            }
-        });
-        return newAdmin;
-    } catch (error) {
-        console.log("Errors in promote user to admin in user.model: ",error);
-        throw error;
-    } finally{
-        await prisma.$disconnect();
-    }
-}
+
 async function createUser(email,password) {
     try {
         // split the username from the email
@@ -136,4 +101,4 @@ const deleteUser = async (userIds) => {
   }
 }
 
-module.exports = {findUserByEmail,createUser,findAdminById,getAllUser,deleteUser,promoteUserToAdmin,};
+module.exports = {findUserByEmail,createUser,getAllUser,deleteUser,findUserById,};

@@ -25,6 +25,7 @@ function SignUp() {
         <div className={`${styles.formBox} ${styles.registerBox} `}>
             {/* <div className="form-value"> */}
                 <form onSubmit={handleSignUp}>
+                   <h2 className={styles.logo}>TTT</h2>
                     <h2>Sign Up</h2>
                     <div className={styles.inputbox}>
                         <ion-icon name="mail-outline"></ion-icon>

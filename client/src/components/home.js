@@ -3,6 +3,7 @@ import AboutPage from "./aboutUs";
 import Hero from "./hero";
 import GlobalStyle from "../assets/globalStyle/home.globalStyle";
 import Footer from "./footer";
+import Menu from "./menu";
 import Header from "./header";
 function Home(){
 
@@ -202,6 +203,8 @@ window.addEventListener("mousemove", function (event) {
                     <Hero/>
                 {/* About us page */}
                     <AboutPage/>
+                {/* About us page */}
+                    <Menu/>    
                 {/* Footer/Contact */}
                     <Footer/>
               </article>

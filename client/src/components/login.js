@@ -1,10 +1,12 @@
 import React,{useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext";
 import logoGoogle from '../assets/img/logo-google-2.svg';
 import SignUp from './signup';
 import { Link } from 'react-router-dom';
 import styles from '../assets/css/login.module.css';
 function Login() {
+  const navigate = useNavigate();
   const {updateLoginInfor,loginInfor, isLoginLoading,login,loginError} = useAuth(); 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,7 +19,10 @@ function Login() {
     }
     
 };
- 
+ const handleLogo = () =>{
+    navigate("/");
+    return;
+ }
     
   return (
     <div className={styles.loginTemplate}>
@@ -26,7 +31,8 @@ function Login() {
             <div className={styles.formBox}>
               {/* <div className="formValue"> */}
                 <form onSubmit={handleLogin}>
-                        <h2>Login</h2>
+                          <h2 className={styles.logo} onClick={()=>{handleLogo()}}>TTT</h2>
+                          <h2>Login</h2>
                         <div className={styles.inputbox}>
                           <ion-icon name="mail-outline"></ion-icon>
                           <input 

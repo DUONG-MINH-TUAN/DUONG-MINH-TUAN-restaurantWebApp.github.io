@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
-const { findUserByEmail, createUser,findAdminById,deleteUser,getAllUser, } = require('../Models/User.model');
+const { findUserByEmail, createUser,deleteUser,getAllUser, } = require('../Models/User.model');
+const {findAdminById} = require('../Models/Admin.model');
 const {generateAccessToken,generateRefreshToken} = require('./Auth.services');
 const DOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
@@ -245,11 +246,22 @@ exports.getAllUsers = async(req,res) => {
       return res.status(401).json({message: "No token provided"});
     }
     
-    //verify the access token expiration
-    jwt.verify(accessToken, SECRET_KEY, (err, user) => {
-      if (err) {
-        return res.status(403).json({message: "Invalid access token"});
-      }
+    // //verify the access token expiration
+    // jwt.verify(accessToken, SECRET_KEY, (err, user) => {
+    //   if (err) {
+    //     return res.status(403).json({message: "Invalid access token"});
+    //   }
+    // });
+
+    // Sử dụng async/await để verify token
+    const user = await new Promise((resolve, reject) => {
+      jwt.verify(accessToken, SECRET_KEY, (err, decodedUser) => {
+        if (err) {
+          reject({ status: 403, message: "Invalid access token" });
+        } else {
+          resolve(decodedUser);
+        }
+      });
     });
 
     const payload = jwt.decode(accessToken);
@@ -264,7 +276,7 @@ exports.getAllUsers = async(req,res) => {
     return res.status(200).json({users: users,message: "Get all users successfully!!!"});
     } catch (error) {
         console.error('Error deleting users in service:', error);
-        return { message: 'An error occurred while deleting users in service.' };
+        return res.status(500).json({ message: 'An error occurred while getting users in service.' });
     }
     
 

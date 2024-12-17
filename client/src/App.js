@@ -15,7 +15,7 @@ import Cart from "./components/cart"
 import "./App.css";
 
 function App() {
-  const { accessToken, registerSuccess, setRegisterSuccess ,setUser} = useAuth();
+  const { user,accessToken, registerSuccess, setRegisterSuccess ,setUser} = useAuth();
   const location = useLocation(); // Get the current route path
   const navigate = useNavigate();
   useEffect(() => {
@@ -23,11 +23,11 @@ function App() {
       navigate("/login"); // Redirect to the login page
       setRegisterSuccess(false);
     }
-  }, [registerSuccess, navigate]); // Trigger when registerSuccess changes
+  }, [registerSuccess]); // Trigger when registerSuccess changes
 
   //tự động setUser khi truy cập đường dẫn này (bao gồm việc reload page)
   useEffect(() => {
-    if(location.pathname === "/"){
+    if(location.pathname === "/" || location.pathname ==="/manage-user"){
       if (accessToken) {
         try {
           const decoded = jwtDecode(accessToken);
@@ -35,7 +35,9 @@ function App() {
             console.log("Error in check path name '/': there is no decoded token")
           }
           console.log("Decoded Token Payload when go to '/' path: ", decoded);
+          
           setUser(decoded);
+          
         } catch (error) {
           console.error("Invalid Token:", error);
         }
@@ -48,13 +50,14 @@ function App() {
      
       <Route path="/cart" element={<Cart/>} />
       {/* <Route path="/" element={<Home/>} /> */}
-      {/* <Route path="/" element={<ManageUser/>} /> */}
+      
       <Route path="/checkout" element={<Checkout/>} />
-      <Route path="/" element={accessToken ? <Home /> : <Login />} />
-      {/* <Route path="/" element={< ManageUser/>} /> */}
+      <Route path="/" element={<Home />} />
+      
       <Route path="/manage-user" element={< ManageUser/>} />
-      {/* <Route path="/promote-to-admin" element={<PromoteAdminPage />} /> */}
+ 
       <Route path="/login" element={accessToken ? <Home /> : <Login />} />
+      {/* <Route path="/login" element={<Login/>} /> */}
       <Route path="/signUp" element={<Signup />} />
     </Routes>
   );

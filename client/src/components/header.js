@@ -1,17 +1,50 @@
-
+import { useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import {useNavigate} from "react-router-dom";
 function Header(){
-    const {user,promoteAdminButGet,logout} = useAuth();
+    const {
+        user,
+        promoteAdminButGet,
+        logout,
+        setAccessToken,
+        setLoginError,
+        setRegisterError,
+        getAllAdminIds,
+    } = useAuth();
     
     const navigate = useNavigate();
 
-    const handlePromoteAdmin = async (e)=>{
+    const handlePromoteAdmin = useCallback(async (e)=>{
         e.preventDefault();
         await promoteAdminButGet();
+        await getAllAdminIds();
         //navigate to PromoteAdminPage
         navigate("/manage-user");
-    }
+    },[]);
+
+    const handleLogout = useCallback(async (e) => {
+        e.preventDefault();
+        // const accessToken = localStorage.getItem("accessToken");
+        // if (!accessToken){
+        //     setAccessToken(null);
+        //     setLoginError(null);
+        //     setRegisterError(null);
+        //     navigate("/login");  // Điều hướng đến trang login
+        //     return;
+        // }
+        await logout();
+         // Chuyển hướng người dùng đến trang login
+         navigate("/login");
+         return;
+    },[])
+
+    const handleLogin =useCallback((e) => {
+        e.preventDefault();
+        setLoginError(null);
+        setRegisterError(null);
+        navigate("/login");
+        return;
+    },[])
     return (
                 
         <header className="header" data-header>
@@ -95,18 +128,29 @@ function Header(){
                 </nav>
                 {/* check the role of admin to generate the button */}
                 { user && (user.role == "admin") &&(
-                <a onClick={handlePromoteAdmin} className="btn btn-secondary">
+                <a onClick={(e)=>handlePromoteAdmin(e)} className="btn btn-secondary">
                     <span className="text text-1">Promote Admin</span>
 
                     <span className="text text-2" aria-hidden="true">Promote Admin</span>
                 </a>
                 )}
-
-                <a onClick={logout} className="btn btn-secondary">
+            {user && (
+                <a onClick={(e)=>handleLogout(e)} className="btn btn-secondary">
                     <span className="text text-1">Logout</span>
 
                     <span className="text text-2" aria-hidden="true">Logout</span>
                 </a>
+                )
+            }
+            {!user && (
+
+                <a onClick={(e)=>handleLogin(e)} className="btn btn-secondary">
+                <span className="text text-1">Login</span>
+
+                <span className="text text-2" aria-hidden="true">Login</span>
+            </a>
+                )
+            }
 
                 <button className="nav-open-btn" aria-label="open menu" data-nav-toggler>
                     <span className="line line-1"></span>

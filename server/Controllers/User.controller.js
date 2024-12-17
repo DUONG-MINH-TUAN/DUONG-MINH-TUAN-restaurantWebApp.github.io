@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {login, signup,logout, deleteUserIds,getAllUsers,} = require('../services/User.services');
-const {promoteAdmin,promoteAdminReal,} = require('../services/Admin.services');
+const {promoteAdmin,promoteAdminReal,getAllAdmins} = require('../services/Admin.services');
 const {reloadAccessToken} = require('../services/Auth.services');
 
 router.post('/login', login);
@@ -28,5 +28,9 @@ router.post('/protected/delete-users',deleteUserIds);
 
 // use token to take all users
 router.get('/protected/get-all-users',getAllUsers);
+
+
+// use token to take all admins
+router.get('/protected/get-all-admins',getAllAdmins);
 
 module.exports = router;

@@ -24,7 +24,7 @@
   .loginTemplate .formBox{
     position: relative;
     width: 400px;
-    height: 580px;
+    height: 650px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 20px;
@@ -37,7 +37,7 @@
   .formBox.registerBox{
     position: relative;
     width: 400px;
-    height: 600px;
+    height: 630px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 20px;
@@ -52,8 +52,34 @@
     font-size: 2em;
     color:#fff;
     text-align: center;
+    margin: 0;
+    padding: 0;
   }
   
+  .loginTemplate
+  h2.logo{
+    font-size: 3.5em;
+  
+    text-align: center;
+      font-family: "Lavishly Yours", cursive;
+      background: linear-gradient(45deg, #FFD700, #F6E27A, #E3C565);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; /* Gradient chỉ áp dụng cho chữ */
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6); /* Tăng bóng đổ khi hover */
+      font-weight: 400;
+      /* font-size: 5.5rem; */
+    
+      cursor:pointer;
+    
+  }
+  .loginTemplate
+  h2.logo:hover {
+    transform: scale(1.2); /* Phóng to logo nhẹ khi hover */
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6); /* Bóng đổ mạnh hơn khi hover */
+    transition: transform 0.3s ease;
+  }
+  
+
   .loginTemplate
  .inputbox{
     position: relative;

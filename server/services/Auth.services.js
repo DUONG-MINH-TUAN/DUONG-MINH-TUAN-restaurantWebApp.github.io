@@ -11,7 +11,7 @@ exports.generateAccessToken = (user) => {
     if (user.role){
       return jwt.sign({id:user.id,role:user.role},SECRET_KEY,{expiresIn:'2h'});
     }
-    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'1h'});
+    return jwt.sign({id:user.id},SECRET_KEY,{expiresIn:'2h'});
 }
 
 // API yêu cầu refresh token
@@ -20,7 +20,7 @@ exports.reloadAccessToken = async (req, res) => {
 // console.log('Refresh Token:', req.cookies.refreshToken);  // Kiểm tra refresh token cụ thể
 
     const refreshToken = req.cookies.refreshToken;
-    console.log("refreshToken when reloading:   ",refreshToken);
+    // console.log("refreshToken when reloading:   ",refreshToken);
     if (!refreshToken) return res.status(401).json({ message: 'No refresh token found, please login again!!!' });
 
     jwt.verify(refreshToken, REFRESH_SECRET_KEY, (err, user) => {
@@ -39,21 +39,6 @@ exports.generateRefreshToken = (user) => {
 }
 
 
-// Middleware để xác thực token
-exports.authenticate = (req, res, next) => {
-  const token = req.headers['authorization'];
-  if (!token) {
-    return res.status(403).json({ message: 'No token provided' });
-  }
-
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: 'Failed to authenticate token' });
-    }
-    req.userId = decoded.userId;
-    next();
-  });
-};
 
 
 

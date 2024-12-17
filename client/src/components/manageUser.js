@@ -1,24 +1,30 @@
 import { useEffect,useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import GlobalStyle from "../assets/globalStyle/manageUser.globalStyle";
 export default function ManageUser() {
-    const {users,deleteUsers,setUsers,deleteQueue,setDeleteQueue,getAllUsers} = useAuth();
+    const navigate = useNavigate();
+    const {
+            users,
+            deleteUsers,
+            setUsers,
+            deleteQueue,
+            setDeleteQueue,
+            getAllUsers,
+            promoteAdminReal,
+            promoteAdminError,
+            admins,
+            getAllAdminIds,
+            setAdmins,
+            logout,
+          } = useAuth();
     
-    //configure toast
-    // toast.configure();
-
-    const deleteRow = (userId) => {
-        const row = document.querySelector("tr[data-id]");
-        const rowId = row.getAttribute('data-id'); // Lấy data-id từ dòng hiện tại
-        if (rowId === userId) {
-            row.remove(); // Xóa dòng nếu data-id trùng với userId
-        }
-    };
 
     // Thêm hoặc loại bỏ người dùng khỏi danh sách xóa
+    
     const toggleDeleteQueue = (userId) => {
         console.log('Current deleteQueue:', deleteQueue); // In giá trị deleteQueue trước khi thay đổi
         console.log('Selected userId:', userId); // In giá trị userId
@@ -30,25 +36,36 @@ export default function ManageUser() {
         });
        
     };
- // Lưu danh sách người dùng vào sessionStorage
- useEffect(() => {
-    // Kiểm tra xem có dữ liệu trong sessionStorage không
-    const storedUsers = sessionStorage.getItem('users');
-    if (storedUsers) {
-        // Nếu có, sử dụng dữ liệu trong sessionStorage thay vì API
-        setUsers(JSON.parse(storedUsers));
-    } else {
-        // Nếu không có, gọi API để lấy dữ liệu người dùng
-        console.log("No data in state 'users'");
+
+    const handleLogout = async(e) => {
+      e.preventDefault();
+        await logout();
+        navigate("/login");
     }
-}, []);
-   
-    const handleDeleteAll = async () => {
-        
+    useEffect(()=>{
+      console.log("Delete queue in manageUser: ",deleteQueue);
+    },[deleteQueue])
+
+    useEffect(() => {
+      // Function để lấy dữ liệu từ sessionStorage
+      const loadUsersFromSession = () => {
+        const storedUsers = sessionStorage.getItem('users');
+        if (storedUsers) {
+          setUsers(JSON.parse(storedUsers));
+        }
+      };
+  
+      // Lấy dữ liệu ngay khi component mount
+      loadUsersFromSession();
+  
+      
+    }, []);
+
+ 
+    const handleDeleteAll = async (e) => {
+        e.preventDefault();
         try {
-            // deleteQueue.map((user) =>{
-            //     deleteRow(user.id);
-            // })
+            
             const response = await deleteUsers(deleteQueue);
             
             if(!response){
@@ -61,6 +78,7 @@ export default function ManageUser() {
             }else {
                 toast.error(response.message||"No users found with the provided IDs!!!");
             }    
+            setDeleteQueue([]);
             const users = await getAllUsers();
             setUsers({userList: users});
             sessionStorage.setItem('users',users);
@@ -70,9 +88,53 @@ export default function ManageUser() {
         }
         
     };
-    const handlePromoteAdmin = async() =>{
-      
+
+    // can optimize through using batch processing technique
+    const handlePromoteAdmin = async(userId) =>{
+       const newAdmin = await promoteAdminReal(userId);
+      // Đợi hàm `promoteAdminReal` xong và kiểm tra lỗi sau khi cập nhật
+
+       if(!newAdmin){
+        // toast.error("No admin created");
+        console.log("There is no admin response in manageUser");
+        return;
+       }
+       toast.success("Promote admin successfully");
+       await getAllAdminIds();
+
+       return;
     }
+    useEffect(() => {
+      if (promoteAdminError?.message) {
+        // Chạy một lần khi promoteAdminError thay đổi và đã có lỗi
+        console.log("Error updated:", promoteAdminError.message);
+        toast.error(promoteAdminError.message);
+      }
+    }, [promoteAdminError]);  // Lắng nghe thay đổi của promoteAdminError4
+
+    useEffect(()=>{
+      // Function để lấy dữ liệu từ sessionStorage
+      const loadAdminsFromSession = () => {
+        const storedAdmins = sessionStorage.getItem('admins');
+        if (storedAdmins) {
+          try {
+            const parsedAdmins = JSON.parse(storedAdmins);
+            console.log("parsedAdmins: ", parsedAdmins);
+            if (JSON.stringify(parsedAdmins) !== JSON.stringify(admins)) {
+              setAdmins(parsedAdmins);
+            }
+          } catch (error) {
+            console.error('Error parsing stored admins:', error);
+          }
+        }
+      };
+  
+      // Lấy dữ liệu ngay khi component mount
+      loadAdminsFromSession();
+    },[])
+    useEffect(()=>{
+      console.log("Admins:",admins);
+    },[admins])
   return (
     <div className="row">
       <GlobalStyle />
@@ -90,7 +152,7 @@ export default function ManageUser() {
             <a href="#" className="settings">
               Setting
             </a>
-            <a href="#" className="logout">
+            <a onClick={(e)=>handleLogout(e)} className="logout">
               Logout
             </a>
           </div>
@@ -129,10 +191,14 @@ export default function ManageUser() {
                 {user.email}
               </td>
               <td>
-                <button className="delete-button" onClick="">
-                  Promote
+              {
+                !admins.includes(user.id) &&
+                (
+                <button className="delete-button" onClick={()=> handlePromoteAdmin(user.id)}>
+                Promote
                 </button>
-                
+                )
+              }  
               </td>
               <td>
                 <button className="delete-button" onClick={() => toggleDeleteQueue(user.id)}>
@@ -148,7 +214,7 @@ export default function ManageUser() {
             
           </tbody>
         </table>
-        <button className="delete-button" onClick={handleDeleteAll}>Delete Selected Users</button>
+        <button className="delete-button" onClick={(e) =>handleDeleteAll(e)}>Delete Selected Users</button>
       </div>)}
     </div>
   );
