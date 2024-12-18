@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 const { getAllUser,} = require('../Models/User.model');
 const {promoteUserToAdmin, findAdminById,getAllAdmins,} = require('../Models/Admin.model');
 const { JSDOM } = require('jsdom');

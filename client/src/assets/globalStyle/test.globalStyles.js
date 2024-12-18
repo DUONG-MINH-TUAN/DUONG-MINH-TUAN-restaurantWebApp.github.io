@@ -100,7 +100,8 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  
+  height:100%;
+  background-color: #1E242A;
 }
 
 .cart-container {

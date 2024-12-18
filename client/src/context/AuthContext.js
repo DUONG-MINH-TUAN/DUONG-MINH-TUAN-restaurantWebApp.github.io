@@ -18,6 +18,21 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
+  const [cart, setCart] = useState([
+    // { id: 1, name: "French Fries", price: 5, quantity: 0 },
+    // { id: 2, name: "Summer Salad", price: 10, quantity: 0 },
+    // { id: 3, name: "Chicken Wings", price: 20, quantity: 0 },
+    // { id: 4, name: "Spaghetti", price: 15, quantity: 0 },
+    // { id: 5, name: "Grilled Fish", price: 25, quantity: 0 },
+    // { id: 6, name: "Fried Rice", price: 12, quantity: 0 },
+    // { id: 7, name: "Burger", price: 8, quantity: 0 },
+    // { id: 8, name: "Pizza", price: 18, quantity: 0 },
+    // { id: 9, name: "Hot Dog", price: 6, quantity: 0 },
+    // { id: 10, name: "Ice Cream", price: 7, quantity: 0 },
+    // { id: 11, name: "Ice Cream", price: 7, quantity: 0 },
+    // { id: 12, name: "Ice Cream", price: 7, quantity: 0 },
+    // { id: 13, name: "Ice Cream", price: 7, quantity: 0 },
+  ]);
   const [deleteQueue, setDeleteQueue] = useState([]);
   const [loginInfor, setLoginInfor] = useState({
     email: "",
@@ -39,6 +54,7 @@ export const AuthProvider = ({ children }) => {
   );
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [promoteAdminError, setPromoteAdminError] = useState(null);
+  const [selectedProducts,setSelectedProducts] = useState([]);
 
   // Used for promote-to-admin
   const [users, setUsers] = useState({
@@ -230,14 +246,56 @@ export const AuthProvider = ({ children }) => {
     if (admins.length > 0) {
       // Khi admins đã được cập nhật, lưu vào sessionStorage
       sessionStorage.setItem('admins', JSON.stringify(admins));
-      console.log("values of admins in session in auth context: ", sessionStorage.getItem('admins'));
+      // console.log("values of admins in session in auth context: ", sessionStorage.getItem('admins'));
     }
   }, [admins]); // Theo dõi khi admins thay đổi
   
-  useEffect(() => {
-    console.log("Admins state updated: ", admins);
-  }, [admins]);
+  // useEffect(() => {
+  //   console.log("Admins state updated: ", admins);
+  // }, [admins]);
 
+
+//   DISHES
+  const getAllInforDishes = async() => {
+    try {
+        const response = await axios.get(`${baseUrl}/get-all-dishes`);
+        const dishes = response.data.dishes;
+        if(!dishes) {
+            console.log("There is no dishes");
+            return;
+        }
+        const updateCart = await addQuantity(dishes);   
+        return updateCart;
+    } catch (error) {
+        console.log("Error in getting all dishes infor in auth context: ", error.message);
+    }
+  }
+
+  const addQuantity = (dishes) => {
+    const updateCart =dishes.map((dish) => ({
+        ...dish,
+        quantity:0    
+    }));
+    return updateCart;
+  }
+  
+
+  const getDishesWithCategory = async (categoryId) =>
+ {
+  try {
+    // console.log("category id in auth context:",categoryId);
+    const response = await axios.post(`${baseUrl}/get-dishes-by-category`,{categoryId: categoryId});
+    const dishes = response.data.dishes;
+    if(!dishes) {
+        console.log("There is no dishes");
+        return;
+    }
+    const updateCart = await addQuantity(dishes);
+    return updateCart;   
+} catch (error) {
+    console.log("Error in getting dishes by category infor in auth context: ", error.message);
+}
+ }
 //   useEffect(() => {
 //     console.log("Users state updated: ", users);
 //   }, [users]);
@@ -255,9 +313,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("User: ", user);
-  }, [user]);
+//   useEffect(() => {
+//     console.log("User: ", user);
+//   }, [user]);
   // USER
   const registerUser = useCallback(async () => {
     try {
@@ -275,9 +333,9 @@ export const AuthProvider = ({ children }) => {
 
       setIsRegisterLoading(true);
       setRegisterError(null);
-      console.log("register infor", registerInfor);
+      // console.log("register infor", registerInfor);
       const response = await axios.post(`${baseUrl}/signup`, registerInfor);
-      console.log(registerError);
+      // console.log(registerError);
       setIsRegisterLoading(false);
       setRegisterSuccess(true);
     } catch (error) {
@@ -389,7 +447,7 @@ export const AuthProvider = ({ children }) => {
       setLoginError(null);
       const response = await axios.post(`${baseUrl}/login`, loginInfor);
 
-      console.log("Response:", response);
+      // console.log("Response:", response);
       // save the access token into the local storage
       localStorage.setItem("accessToken", response.data.accessToken);
       // sessionStorage.setItem("expiryDate",response.data.expiryDate);
@@ -402,7 +460,7 @@ export const AuthProvider = ({ children }) => {
         console.log("Error in login process: the decodedToken is null");
         return;
       }
-      console.log("decodedToken: ", decodedToken);
+      // console.log("decodedToken: ", decodedToken);
       setUser(decodedToken);
       setIsLoginLoading(false);
     } catch (error) {
@@ -484,6 +542,12 @@ export const AuthProvider = ({ children }) => {
         admins,
         getAllAdminIds,
         setAdmins,
+        cart,
+        setCart,
+        getAllInforDishes,
+        selectedProducts,
+        setSelectedProducts,
+        getDishesWithCategory,
       }}
     >
       {children}

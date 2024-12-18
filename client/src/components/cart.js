@@ -1,174 +1,302 @@
-import item1 from "../assets/img/item-1.png";
-import minus from "../assets/img/minus.svg";
-import plus from "../assets/img/plus.svg";
-import item2 from "../assets/img/item-2.png";
-import item3 from "../assets/img/item-3.png";
-import item4 from "../assets/img/item-4.png";
-import item5 from "../assets/img/item-5.png";
-import item6 from "../assets/img/item-7.webp";
+
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import React, { useState } from 'react';
+import { useEffect, useState } from "react";
+import React from "react";
 // import './App.css'; // CSS file for styles
 import GlobalStyle from "../assets/globalStyle/test.globalStyles";
+import { useAuth } from "../context/AuthContext";
 const Cart = () => {
   const navigate = useNavigate();
-  const [cart, setCart] = useState([
-    { id: 1, name: "French Fries", price: 5, quantity: 0 },
-    { id: 2, name: "Summer Salad", price: 10, quantity: 0 },
-    { id: 3, name: "Chicken Wings", price: 20, quantity: 0 },
-    { id: 4, name: "Spaghetti", price: 15, quantity: 0 },
-    { id: 5, name: "Grilled Fish", price: 25, quantity: 0 },
-    { id: 6, name: "Fried Rice", price: 12, quantity: 0 },
-    { id: 7, name: "Burger", price: 8, quantity: 0 },
-    { id: 8, name: "Pizza", price: 18, quantity: 0 },
-    { id: 9, name: "Hot Dog", price: 6, quantity: 0 },
-    { id: 10, name: "Ice Cream", price: 7, quantity: 0 },
-    { id: 11, name: "Ice Cream", price: 7, quantity: 0 },
-    { id: 12, name: "Ice Cream", price: 7, quantity: 0 },
-    { id: 13, name: "Ice Cream", price: 7, quantity: 0 },
-  ]);
-
-  const updateQuantity = (id, delta) => {
-    setCart(
-      cart.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(0, item.quantity + delta) }
-          : item
-      )
-    );
+  const {
+    cart,
+    setCart,
+    selectedProducts,
+    setSelectedProducts,
+    getDishesWithCategory,
+  } = useAuth();
+  // State for saving data cache
+  const [categoryDataCache, setCategoryDataCache] = useState(
+    () => JSON.parse(sessionStorage.getItem("categoryDataCache")) || {}
+  );
+  const [currentCategory, setCurrentCategory] = useState(
+    () => sessionStorage.getItem("currentCategory") || 1 // take the session, if not, the default value is 1
+  );
+  // load data from database 
+  const fetchCategoryData = async (categoryId) => {
+    if (categoryDataCache[categoryId]) {
+      // if the data is exist in cache, setCart by that data cache
+      setCart(categoryDataCache[categoryId]);
+    } else {
+      try {
+        console.log("category in UI cart", categoryId);
+        const updateCart = await getDishesWithCategory(categoryId); // send request for categoryId
+        setCart(updateCart);
+        const updatedCache = {
+          ...categoryDataCache,
+          [categoryId]: updateCart, // save cache
+        };
+        setCategoryDataCache(updatedCache);
+        sessionStorage.setItem(
+          "categoryDataCache",
+          JSON.stringify(updatedCache)
+        ); // save cache into session
+      } catch (error) {
+        console.error("Error fetching category data:", error);
+      }
+    }
   };
-  const handleHome = ()=>{
-    navigate("/");
-  }
+
+  // hanle category switching
+  const handleCategoryClick = (categoryId) => {
+    setCurrentCategory(categoryId); 
+    sessionStorage.setItem("currentCategory", categoryId); 
+    fetchCategoryData(categoryId); 
+  };
+
+  // Handle selecting or deselecting a product
+  const updateSelectedProducts = (productId, delta) => {
+    setSelectedProducts((prev) => {
+     
+      let updatedProducts = [...prev];
+  
+
+      const index = updatedProducts.findIndex((item) => item.ID === productId);
+  
+      if (index !== -1) {
+       
+        const updatedProduct = { ...updatedProducts[index] };
+        updatedProduct.quantity = Math.max(0, updatedProduct.quantity + delta);
+  
+        if (updatedProduct.quantity === 0) {
+         
+          updatedProducts = updatedProducts.filter((item) => item.ID !== productId);
+        } else {
+          
+          updatedProducts[index] = updatedProduct;
+        }
+      } else if (delta > 0) {
+      
+        const productToAdd = cart.find((item) => item.ID === productId);
+        if (productToAdd) {
+          updatedProducts.push({ ...productToAdd, quantity: delta });
+        }
+      }
+  
+      return updatedProducts;
+    });
+  };
+  
+  // Load the data when first going to the page (Starter)
+  useEffect(() => {
+    fetchCategoryData(currentCategory); 
+  }, []);
+
+  //auto save cart into session when the cart is changing
+  useEffect(() => {
+    if (cart.length > 0) {
+      sessionStorage.setItem("cart", JSON.stringify(cart));
+     
+    }
+  }, [cart]);
+
+  // take dishes when reloading
+  useEffect(() => {
+    const reloadTakeDishesSession = () => {
+      const tempCart = sessionStorage.getItem("cart");
+      const parseCart = JSON.parse(tempCart);
+      if (parseCart) {
+        try {
+          if (JSON.stringify(parseCart) !== JSON.stringify(cart)) {
+            setCart(parseCart);
+          }
+        } catch (error) {
+          console.log("Error in cart UI in parse cart: ", error);
+        }
+      }
+    };
+    reloadTakeDishesSession();
+  }, []);
+  // take selected products when reloading
+  useEffect(() => {
+    const reloadTakeDishesSession = () => {
+      const tempCart = sessionStorage.getItem("selectedProducts");
+      const parseCart = JSON.parse(tempCart);
+      if (parseCart) {
+        try {
+          if (JSON.stringify(parseCart) !== JSON.stringify(selectedProducts)) {
+            setCart(parseCart);
+          }
+        } catch (error) {
+          console.log("Error in selectedProduct UI in parse cart: ", error);
+        }
+      }
+    };
+    reloadTakeDishesSession();
+  }, []);
+
+//save selectedProducts into the session
+  useEffect(()=>{
+    if(selectedProducts.length > 0){
+        sessionStorage.setItem('selectedProducts',JSON.stringify(selectedProducts));
+        console.log("Values of cart in session in auth context: ", sessionStorage.getItem('selectedProducts'));
+    } 
+  },[selectedProducts])
+
+ 
+  // get image path
+  const getImagePath = (imageName) => {
+    return require(`../assets/img/${imageName}`);
+  };
+
   return (
     <section>
- <GlobalStyle/>
-    {/* Header (Tách ra ngoài) */}
-    <div className="header-container">
-    <header className="header">
-      <div className="logo" onClick={handleHome}>TTT</div>
-      <input
-        type="text"
-        className="search-bar"
-        placeholder="Search product or any order..."
-        />
-      <button className="call-button">Call Staff</button>
-    </header>
-  </div>
-    <div className="page-container">
-       
-        
-      
-
-      {/* Left container with buttons */}
-      <div className="side-container left-container">
-        <button className="menu-button">Starter</button>
-        <button className="menu-button">Main Course</button>
-        <button className="menu-button">Desserts</button>
-        <button className="menu-button">Drinks</button>
+      <GlobalStyle />
+      {/* Header*/}
+      <div className="header-container">
+        <header className="header">
+          <div className="logo" onClick={() => navigate("/")}>
+            TTT
+          </div>
+          <input
+            type="text"
+            className="search-bar"
+            placeholder="Search product or any order..."
+          />
+          <button className="call-button">Call Staff</button>
+        </header>
       </div>
-  
-      {/* Main container */}
-      <div className="main-container">
-        <div className="cart-container">
-          {cart.map((product) => (
-            <div key={product.id} className="product-card">
-              <div className="image-section">
-                <img
-                  src={item1}
-                  alt={product.name}
-                  className="product-image"
-                  />
-              </div>
-              <div className="info-section">
-                <div className="text-section">
-
-                  <h3 className="product-title">{product.name}</h3>
-                  <p className="product-price">${product.price}</p>
-                </div>
-                <div className="quantity-controls">
-                  <button
-                    onClick={() => updateQuantity(product.id, -1)}
-                    className="quantity-btn"
-                    >
-                    -
-                  </button>
-                  <span className="quantity-value">{product.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(product.id, 1)}
-                    className="quantity-btn"
-                    >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+      <div className="page-container">
+        {/* Left container with buttons */}
+        <div className="side-container left-container">
+          <button
+            className={`menu-button ${currentCategory == 1 ? "active" : ""}`}
+            onClick={() => handleCategoryClick(1)}
+          >
+            Starter
+          </button>
+          <button
+            className={`menu-button ${currentCategory == 2 ? "active" : ""}`}
+            onClick={() => handleCategoryClick(2)}
+          >
+            Main Course
+          </button>
+          <button
+            className={`menu-button ${currentCategory == 3 ? "active" : ""}`}
+            onClick={() => handleCategoryClick(3)}
+          >
+            Desserts
+          </button>
+          <button
+            className={`menu-button ${currentCategory == 4 ? "active" : ""}`}
+            onClick={() => handleCategoryClick(4)}
+          >
+            Drinks
+          </button>
         </div>
-        
-      </div>
-      
-      {/* Right container */}
-      <div className="side-container right-container">
-        <h3 className="order-header">ORDER #</h3>
-        
-        {/* Selected Products Section */}
-        <div className="selected-products">
-          
+
+        {/* Main container */}
+        <div className="main-container">
+          <div className="cart-container">
+            {cart.map((product) => (
+              <div key={product.ID} className="product-card">
+                <div className="image-section">
+                  <img
+                    src={getImagePath(product.img_url)}
+                    alt={product.Name}
+                    className="product-image"
+                  />
+                </div>
+                <div className="info-section">
+                  <div className="text-section">
+                    <h3 className="product-title">{product.Name}</h3>
+                    <p className="product-price">${product.price}</p>
+                  </div>
+                  <div className="quantity-controls">
+                    <button
+                      onClick={() => updateSelectedProducts(product.ID, -1)}
+                      className="quantity-btn"
+                    >
+                      -
+                    </button>
+                    <span className="quantity-value">
+                      {
+                        selectedProducts.find((item) => item.ID === product.ID)
+                          ?.quantity || 0
+                      }
+                    </span>
+                    <button
+                      onClick={() => updateSelectedProducts(product.ID, 1)}
+                      className="quantity-btn"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right container */}
+        <div className="side-container right-container">
+          <h3 className="order-header">ORDER #</h3>
+
+          {/* Selected Products Section */}
+          <div className="selected-products">
             <div className="selected-products-container">
-              {cart
-                .filter((item) => item.quantity > 0)
-                .map((product) => (
-                  <div key={product.id} className="selected-product-card">
+            {selectedProducts.map((product) => (
+                  <div key={product.ID} className="selected-product-card">
                     <img
-                      src={item2}
-                      alt={product.name}
+                      src={getImagePath(product.img_url)}
+                      alt={product.Name}
                       className="selected-product-image"
                     />
                     <div className="selected-product-info">
                       <div>
-                      <h3>{product.name}</h3>
-                      <p>${product.price* product.quantity}</p>
+                        <h3>{product.Name}</h3>
+                        <p>${product.price * product.quantity}</p>
                       </div>
                       <div>
-                      <h3>Quantity:</h3>
-                      <p>{product.quantity}</p>
+                        <h3>Quantity:</h3>
+                        <p>{product.quantity}</p>
                       </div>
                     </div>
                   </div>
                 ))}
             </div>
-        
-        </div>
+          </div>
 
-        <div className="order-summary">
-          <p>
-            Subtotal: $
-            {cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}
-          </p>
-          <p>
-            Service Charge 10%: $
-            {(
-              cart.reduce((sum, item) => sum + item.price * item.quantity, 0) *
-              0.1
-            ).toFixed(2)}
-          </p>
-          <p>
-            Total: $
-            {(
-              cart.reduce((sum, item) => sum + item.price * item.quantity, 0) *
-              1.1
-            ).toFixed(2)}
-          </p>
-        </div>
-        <div className="order-actions">
-          <button className="cancel-order">Cancel Order</button>
-          <button className="send-order">Send Order</button>
+          <div className="order-summary">
+            <p>
+              Subtotal: $
+              {selectedProducts.reduce((sum, item) => sum + item.price * item.quantity, 0)}
+            </p>
+            <p>
+              Service Charge 10%: $
+              {(
+                selectedProducts.reduce(
+                  (sum, item) => sum + item.price * item.quantity,
+                  0
+                ) * 0.1
+              ).toFixed(2)}
+            </p>
+            <p>
+              Total: $
+              {(
+                selectedProducts.reduce(
+                  (sum, item) => sum + item.price * item.quantity,
+                  0
+                ) * 1.1
+              ).toFixed(2)}
+            </p>
+          </div>
+          <div className="order-actions">
+            <button className="cancel-order">Cancel Order</button>
+            <button className="send-order">Send Order</button>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
   );
 };
 

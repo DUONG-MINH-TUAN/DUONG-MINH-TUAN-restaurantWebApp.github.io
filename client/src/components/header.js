@@ -14,6 +14,13 @@ function Header(){
     
     const navigate = useNavigate();
 
+    const handleOrder = useCallback((e)=>{
+            e.preventDefault();
+            setLoginError(null);
+            setRegisterError(null);
+            navigate("/Cart");
+            return;
+    },[])
     const handlePromoteAdmin = useCallback(async (e)=>{
         e.preventDefault();
         await promoteAdminButGet();
@@ -139,6 +146,16 @@ function Header(){
                     <span className="text text-1">Logout</span>
 
                     <span className="text text-2" aria-hidden="true">Logout</span>
+                </a>
+                )
+            }
+            
+            {!user && (
+
+                <a onClick={(e)=>handleOrder(e)} className="btn btn-secondary">
+                <span className="text text-1">Order Now</span>
+
+                <span className="text text-2" aria-hidden="true">Order Now</span>
                 </a>
                 )
             }

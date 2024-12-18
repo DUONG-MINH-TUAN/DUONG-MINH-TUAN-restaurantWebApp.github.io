@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {login, signup,logout, deleteUserIds,getAllUsers,} = require('../services/User.services');
 const {promoteAdmin,promoteAdminReal,getAllAdmins} = require('../services/Admin.services');
+const {getAllDishesInfor,getDishesBasedCategory} = require('../services/Dish.services');
 const {reloadAccessToken} = require('../services/Auth.services');
 
 router.post('/login', login);
@@ -32,5 +33,12 @@ router.get('/protected/get-all-users',getAllUsers);
 
 // use token to take all admins
 router.get('/protected/get-all-admins',getAllAdmins);
+
+
+// use token to get all dishes in menu
+router.get('/get-all-dishes',getAllDishesInfor);
+
+// use token to get all dishes in menu
+router.post('/get-dishes-by-category',getDishesBasedCategory);
 
 module.exports = router;

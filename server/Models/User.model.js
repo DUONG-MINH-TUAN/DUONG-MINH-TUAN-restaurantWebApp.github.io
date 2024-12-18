@@ -101,4 +101,6 @@ const deleteUser = async (userIds) => {
   }
 }
 
+
+
 module.exports = {findUserByEmail,createUser,getAllUser,deleteUser,findUserById,};

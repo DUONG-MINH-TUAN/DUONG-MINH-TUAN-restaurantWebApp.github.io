@@ -3,18 +3,18 @@ CREATE DATABASE DiskManagementDB;
 USE DiskManagementDB;
 
 -- Step 2: Create the Category table
-CREATE TABLE Category (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    Name VARCHAR(100) NOT NULL
-);
 
+CREATE TABLE category (
+  ID INT AUTO_INCREMENT PRIMARY KEY,
+  Name VARCHAR(255) NOT NULL UNIQUE,
+);
 -- Step 3: Create the Disk table which references Category
 CREATE TABLE Disk (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Name VARCHAR(100) NOT NULL,   -- Name of the disk item
-    Type VARCHAR(50),             -- Type of disk (e.g., Music, Movie)
-    Cost DECIMAL(10, 2),          -- Cost of the disk item
+    Cost FLOAT,          -- Cost of the disk item
     Category_ID INT,              -- Foreign key referring to Category
+    img_url VARCHAR(255) NOT NULL,
     FOREIGN KEY (Category_ID) REFERENCES Category(ID) ON DELETE SET NULL
 );
 
@@ -68,7 +68,7 @@ CREATE TABLE Category_Promotion (
     Category_ID INT NOT NULL,     -- Foreign key referring to Category
     PRIMARY KEY (Promotion_ID, Category_ID),  -- Composite primary key
     FOREIGN KEY (Promotion_ID) REFERENCES Promotion(ID) ON DELETE CASCADE,
-    FOREIGN KEY (Category_ID) REFERENCES Category(ID) ON DELETE CASCADE
+    FOREIGN KEY (Category_ID) REFERENCES Category(id) ON DELETE CASCADE
 );
 
 -- Tạo bảng userinfor

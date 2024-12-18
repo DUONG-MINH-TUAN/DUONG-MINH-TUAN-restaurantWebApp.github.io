@@ -39,8 +39,8 @@ model category_promotion {
 model disk {
   ID          Int         @id @default(autoincrement())
   Name        String      @db.VarChar(100)
-  Type        String?     @db.VarChar(50)
-  Cost        Decimal?    @db.Decimal(10, 2)
+  price       Float
+  img_url     String
   Category_ID Int?
   cart        cart[]
   category    category?   @relation(fields: [Category_ID], references: [ID], onUpdate: NoAction, map: "disk_ibfk_1")
