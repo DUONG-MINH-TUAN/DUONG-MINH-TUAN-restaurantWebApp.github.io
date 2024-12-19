@@ -2,52 +2,50 @@ import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
 
-    body {
+body {
             font-family: Arial, sans-serif;
-            // margin: 20px;
-           
-            display: flex;
-            width:100%;
+            margin: 20px;
+            // display: flex;
         }
-            
-
-html, body {
-    height: 100%;
-    margin: 0;  
-    padding: 0; 
-}
-/* Đảm bảo #root chiếm toàn bộ không gian */
-#root {
+    section{
     display: flex;
-    flex-direction: column;  
-    height: 100%;  
-    width: 100%;   
+    }
+   .modal {
+    display: none; /* Modal không hiển thị mặc định */
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
 }
-            .row{
- display: flex; /* Sử dụng Flexbox */
-    justify-content: space-between; /* Giãn đều khoảng cách giữa các phần tử */
-    align-items: flex-start; /* Căn phần tử theo chiều dọc (top align) */
-    width:100%;
-    height:100%;
+
+.modal.show {
+    display: flex; /* Hiển thị modal khi có class "show" */
 }
-    .column{
+.note {
+    background-color: #ffcc00;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 3px;
+    padding: 2px 5px;
+    margin-left: 10px;
+}
+ .column{
         display:flex;
         flex-direction:column;
         justify-content: space-between;   
         height: 100%; 
     }
-.sidebar-title {
-            color: goldenrod;
-            font-family: 'Lavishly Yours', cursive;  /* Apply the Lavishly Yours font */
-            font-size: 2.5em;  /* Adjust the size as needed */
-        }
+
         .sidebar {
             width: 200px;
             background-color: #f4f4f4;
             border-radius: 8px;
             padding: 20px;
             margin-right: 20px;
-            height:100%;
         }
 
         .sidebar a {
@@ -72,13 +70,12 @@ html, body {
         }
 
         .dashboard {
-            flex-grow: 1;
+            max-width: 1200px;
+            flex: 1;
             border: 1px solid #ddd;
             border-radius: 8px;
             overflow: hidden;
-            padding:20px;
-            margin:10px;
-            width: 100%; 
+            padding: 20px;
         }
 
         .add-button {
@@ -102,6 +99,7 @@ html, body {
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         thead {
@@ -130,12 +128,6 @@ html, body {
             background-color: #f1f1f1;
         }
 
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
         .delete-button {
             background-color: #e74c3c;
             color: white;
@@ -149,19 +141,62 @@ html, body {
             background-color: #c0392b;
         }
 
-        select {
-            padding: 6px;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
             border-radius: 4px;
         }
-.note {
-    background-color: #ffcc00;
-    color: #fff;
-    font-size: 12px;
-    border-radius: 3px;
-    padding: 2px 5px;
-    margin-left: 10px;
-}
 
+        .modal button {
+            background-color: #f1c40f;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background-color: #d4ac0d;
+        }
+
+        .close-button {
+            background-color: #e74c3c;
+            margin-top: 10px;
+        }
+
+        .close-button:hover {
+            background-color: #c0392b;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Lavishly+Yours&display=swap');
+
+        .sidebar-title {
+            color: goldenrod;
+            font-family: 'Lavishly Yours', cursive;  /* Apply the Lavishly Yours font */
+            font-size: 2.5em;  /* Adjust the size as needed */
+        }
 
 `;
 export default GlobalStyle;

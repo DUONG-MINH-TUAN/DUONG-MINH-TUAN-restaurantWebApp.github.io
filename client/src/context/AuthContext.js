@@ -19,20 +19,9 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [cart, setCart] = useState([
-    // { id: 1, name: "French Fries", price: 5, quantity: 0 },
-    // { id: 2, name: "Summer Salad", price: 10, quantity: 0 },
-    // { id: 3, name: "Chicken Wings", price: 20, quantity: 0 },
-    // { id: 4, name: "Spaghetti", price: 15, quantity: 0 },
-    // { id: 5, name: "Grilled Fish", price: 25, quantity: 0 },
-    // { id: 6, name: "Fried Rice", price: 12, quantity: 0 },
-    // { id: 7, name: "Burger", price: 8, quantity: 0 },
-    // { id: 8, name: "Pizza", price: 18, quantity: 0 },
-    // { id: 9, name: "Hot Dog", price: 6, quantity: 0 },
-    // { id: 10, name: "Ice Cream", price: 7, quantity: 0 },
-    // { id: 11, name: "Ice Cream", price: 7, quantity: 0 },
-    // { id: 12, name: "Ice Cream", price: 7, quantity: 0 },
-    // { id: 13, name: "Ice Cream", price: 7, quantity: 0 },
   ]);
+  const [allDishes, setAllDishes] = useState([]);
+  const [dishDeleteQueue,setDishDeleteQueue] = useState([]);
   const [deleteQueue, setDeleteQueue] = useState([]);
   const [loginInfor, setLoginInfor] = useState({
     email: "",
@@ -264,13 +253,45 @@ export const AuthProvider = ({ children }) => {
             console.log("There is no dishes");
             return;
         }
-        const updateCart = await addQuantity(dishes);   
-        return updateCart;
+        
+        return dishes;
+
     } catch (error) {
         console.log("Error in getting all dishes infor in auth context: ", error.message);
     }
   }
 
+  // used to set all dishes
+  const getAllFoods = async() => {
+    try {
+      const dishes = await getAllInforDishes();
+      if(!dishes) {
+          console.log("There is no foods");
+          return;
+      }
+      
+      setAllDishes(dishes);
+  } catch (error) {
+      console.log("Error in getting all foods in auth context: ", error.message);
+  }
+  }
+
+  const insertDish = async(dish) => {
+    try {
+      const response = await instance.post(`${baseUrl}/protected/add-new-dish`,dish);
+      if(!response){
+        console.log("there is no response in insertDish in auth context");
+        return;
+      }
+      console.log("response in insert dish context",response);
+      if (!response.data.success){
+        console.log(response.data.message);
+      }
+      return response.data.message;
+    } catch (error) {
+      console.log("Error in inserting dish",error);
+    }
+  }
   const addQuantity = (dishes) => {
     const updateCart =dishes.map((dish) => ({
         ...dish,
@@ -296,6 +317,26 @@ export const AuthProvider = ({ children }) => {
     console.log("Error in getting dishes by category infor in auth context: ", error.message);
 }
  }
+
+ const deleteDishes = async (dishDeleteQueue) => {
+  try {
+    const response = await instance.post(
+      `${baseUrl}/protected/delete-dishes`,
+      dishDeleteQueue
+    );
+    if (!response) {
+      console.log("There is no response from api endpoint of delete dishes route");
+      return;
+    }
+    console.log("The successfull message: ", response.data.message);
+    return response.data;
+  } catch (error) {
+    console.log("There is error in deleting dishes in auth context:", error);
+  }
+};
+
+
+ 
 
 //save selectedProducts into the session
 useEffect(()=>{
@@ -574,6 +615,14 @@ useEffect(() => {
         getDishesWithCategory,
         selectedNewButton,
         setSelectedNewButton,
+        allDishes,
+        setAllDishes,
+        dishDeleteQueue,
+        setDishDeleteQueue,
+        getAllFoods,
+        deleteDishes,
+        insertDish,
+
       }}
     >
       {children}

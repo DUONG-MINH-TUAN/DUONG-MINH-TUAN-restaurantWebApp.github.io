@@ -101,3 +101,7 @@ CREATE TABLE chef (
   FOREIGN KEY (user_id) REFERENCES userinfor(id) ON DELETE CASCADE ON UPDATE NO ACTION,  
   CONSTRAINT unique_email UNIQUE (user_id)  
 );
+
+
+ALTER TABLE disk
+MODIFY COLUMN img_url VARCHAR(255) DEFAULT 'item1.png';

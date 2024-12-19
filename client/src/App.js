@@ -10,7 +10,7 @@ import Signup from "./components/signup";
 
 import ManageUser from "./components/manageUser";
 import Checkout from "./components/checkout";
-
+import FoodManagement from "./components/foodManagement";
 import Cart from "./components/cart"
 import "./App.css";
 
@@ -27,7 +27,7 @@ function App() {
 
   //tự động setUser khi truy cập đường dẫn này (bao gồm việc reload page)
   useEffect(() => {
-    if(location.pathname === "/" || location.pathname ==="/manage-user"){
+    if(location.pathname === "/" || location.pathname ==="/manage-user" || location.pathname ==="/food-management"){
       if (accessToken) {
         try {
           const decoded = jwtDecode(accessToken);
@@ -49,16 +49,18 @@ function App() {
       
      
       <Route path="/cart" element={<Cart/>} />
-      {/* <Route path="/" element={<Home/>} /> */}
+      <Route path="/" element={<Home/>} />
       
       <Route path="/checkout" element={<Checkout/>} />
-      <Route path="/" element={<Home />} />
+      {/* <Route path="/" element={<FoodManagement />} /> */}
       
       <Route path="/manage-user" element={< ManageUser/>} />
  
       <Route path="/login" element={accessToken ? <Home /> : <Login />} />
       {/* <Route path="/login" element={<Login/>} /> */}
       <Route path="/signUp" element={<Signup />} />
+
+      <Route path="/food-management" element={<FoodManagement />} />
     </Routes>
   );
 }

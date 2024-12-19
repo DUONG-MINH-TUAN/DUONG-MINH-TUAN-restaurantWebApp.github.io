@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react";
+import { useEffect,useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ToastContainer,toast } from 'react-toastify';
@@ -20,8 +20,17 @@ export default function ManageUser() {
             getAllAdminIds,
             setAdmins,
             logout,
+            getAllFoods
           } = useAuth();
     
+
+
+  const handleFoodManager = useCallback(async(e)=>{
+        e.preventDefault();
+        await getAllFoods();
+        navigate("/food-management");
+        return;
+    },[]);
 
     // Thêm hoặc loại bỏ người dùng khỏi danh sách xóa
     
@@ -142,16 +151,12 @@ export default function ManageUser() {
       <div className="sidebar">
         <div className="column">
           <div>
-            <a href="#">Users</a>
-            <a href="#">Items</a>
-            <a href="#">Tables</a>
-            <a href="#">Message</a>
+            <h1 className="sidebar-title" onClick={()=>navigate("/")}>TTT</h1>
+            <a onClick={(e)=>handleFoodManager(e)}>Items</a>
+            <a href="#">Order</a>
           </div>
           {/* <div className="spacer"></div> */}
           <div>
-            <a href="#" className="settings">
-              Setting
-            </a>
             <a onClick={(e)=>handleLogout(e)} className="logout">
               Logout
             </a>

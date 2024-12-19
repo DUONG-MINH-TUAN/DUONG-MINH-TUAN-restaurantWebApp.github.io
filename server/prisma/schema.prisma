@@ -40,7 +40,7 @@ model disk {
   ID          Int         @id @default(autoincrement())
   Name        String      @db.VarChar(100)
   price       Float
-  img_url     String
+  img_url     String      @default("item-1.png")
   Category_ID Int?
   cart        cart[]
   category    category?   @relation(fields: [Category_ID], references: [ID], onUpdate: NoAction, map: "disk_ibfk_1")

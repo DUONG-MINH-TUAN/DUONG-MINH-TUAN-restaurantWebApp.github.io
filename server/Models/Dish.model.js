@@ -34,3 +34,49 @@ exports.getDishesByCategory = async(id) => {
         await prisma.$disconnect();
     }
 }
+
+
+
+
+exports.deleteDishes = async (dishIds) => {
+    try {
+        const result = await prisma.disk.deleteMany({
+            where: {
+                ID: {
+                    in: dishIds,
+                }
+            }
+        });
+         // Kiểm tra xem có bao nhiêu dishes bị xóa
+        if (result.count > 0) {
+            return { success: true, message: `${result.count} dishes deleted successfully.` };
+        } else {
+            return { success: false, message: 'No dishes found with the provided IDs.' };
+        }
+    } catch (error) {
+        console.error('Error deleting dishes:', error);
+         return { success: false, message: 'An error occurred while deleting dishes.' };
+  }
+}
+
+
+exports.createDish = async(dish) => {
+    try {
+        
+
+        const newDish = await prisma.disk.create({
+            data:{
+                Name : dish.name,
+                price: dish.price,
+                Category_ID:dish.Category_ID 
+            }
+        });
+        return newDish;
+    } catch (error) {
+        console.error('Error creating dish:', error);
+        return;
+    }   finally {
+        // ensure disconnecting Prisma Client after using
+        await prisma.$disconnect();
+    }
+}

@@ -177,7 +177,7 @@ const Cart = () => {
               <div key={product.ID} className="product-card">
                 <div className="image-section">
                   <img
-                    src={getImagePath(product.img_url)}
+                    src={getImagePath(product.img_url)||"https://via.placeholder.com/100"}
                     alt={product.Name}
                     className="product-image"
                   />

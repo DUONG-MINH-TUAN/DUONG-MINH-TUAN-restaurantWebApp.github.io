@@ -10,6 +10,7 @@ function Header(){
         setLoginError,
         setRegisterError,
         getAllAdminIds,
+        getAllFoods
     } = useAuth();
     
     const navigate = useNavigate();
@@ -25,22 +26,14 @@ function Header(){
         e.preventDefault();
         await promoteAdminButGet();
         await getAllAdminIds();
-        //navigate to PromoteAdminPage
+        //navigate to manageUser
         navigate("/manage-user");
     },[]);
 
     const handleLogout = useCallback(async (e) => {
         e.preventDefault();
-        // const accessToken = localStorage.getItem("accessToken");
-        // if (!accessToken){
-        //     setAccessToken(null);
-        //     setLoginError(null);
-        //     setRegisterError(null);
-        //     navigate("/login");  // Điều hướng đến trang login
-        //     return;
-        // }
         await logout();
-         // Chuyển hướng người dùng đến trang login
+         // navigate to login
          navigate("/login");
          return;
     },[])
@@ -52,6 +45,14 @@ function Header(){
         navigate("/login");
         return;
     },[])
+
+
+    const handleFoodManager = useCallback(async(e)=>{
+        e.preventDefault();
+        await getAllFoods();
+        navigate("/food-management");
+        return;
+    },[]);
     return (
                 
         <header className="header" data-header>
@@ -133,6 +134,14 @@ function Header(){
                             </div>
 
                 </nav>
+
+                { user && (user.role == "admin") &&(
+                <a onClick={(e)=>handleFoodManager(e)} className="btn btn-secondary">
+                    <span className="text text-1">Food Management</span>
+
+                    <span className="text text-2" aria-hidden="true">Food Management</span>
+                </a>
+                )}
                 {/* check the role of admin to generate the button */}
                 { user && (user.role == "admin") &&(
                 <a onClick={(e)=>handlePromoteAdmin(e)} className="btn btn-secondary">
