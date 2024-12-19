@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Management Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            padding: 20px;
+            margin-right: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+
+        .sidebar .spacer {
+            height: 200px;
+        }
+
+        .sidebar .logout {
+            color: red;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .add-button {
+            background-color: #f1c40f;
+            color: white;
+            border: none;
+            padding: 15px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+        }
+
+        .add-button:hover {
+            background-color: #d4ac0d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background-color: #f4f4f4;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        th:hover {
+            background-color: #eaeaea;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal button {
+            background-color: #f1c40f;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background-color: #d4ac0d;
+        }
+
+        .close-button {
+            background-color: #e74c3c;
+            margin-top: 10px;
+        }
+
+        .close-button:hover {
+            background-color: #c0392b;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Lavishly+Yours&display=swap');
+
+        .sidebar-title {
+            color: goldenrod;
+            font-family: 'Lavishly Yours', cursive;  /* Apply the Lavishly Yours font */
+            font-size: 2.5em;  /* Adjust the size as needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1 class="sidebar-title">TTT</h1>
+        <a href="user_management.html">Users</a>
+        <a href="food_management.html">Items</a>
+        <a href="order_tracking.html">Order</a>
+        <a href="#">Message</a>
+        <div class="spacer"></div>
+        <a href="#" class="settings">Setting</a>
+        <a href="#" class="logout">Logout</a>
+    </div>
+
+    <div class="dashboard">
+        <h1>Food Management</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><img src="https://via.placeholder.com/40" alt="Food Image"></td>
+                    <td>Pizza</td>
+                    <td>$10.00</td>
+                    <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><img src="https://via.placeholder.com/40" alt="Food Image"></td>
+                    <td>Burger</td>
+                    <td>$5.00</td>
+                    <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="add-button" onclick="openModal()">Add New Food</button>
+    </div>
+
+    <div class="modal" id="addFoodModal">
+        <div class="modal-content">
+            <h3>Add New Food</h3>
+            <input type="text" id="foodName" placeholder="Food Name">
+            <input type="text" id="foodImage" placeholder="Food Image URL">
+            <input type="text" id="foodPrice" placeholder="Food Price">
+            <button onclick="addNewFood()">Add Food</button>
+            <button class="close-button" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+        }
+
+        function openModal() {
+            document.getElementById('addFoodModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('addFoodModal').style.display = 'none';
+        }
+
+        function addNewFood() {
+            const table = document.querySelector('table tbody');
+            const rowCount = table.rows.length + 1;
+
+            const foodName = document.getElementById('foodName').value;
+            const foodImage = document.getElementById('foodImage').value;
+            const foodPrice = document.getElementById('foodPrice').value;
+
+            if (!foodName || !foodImage || !foodPrice) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                <td><img src="${foodImage}" alt="Food Image" style="width: 40px; height: 40px;"></td>
+                <td>${foodName}</td>
+                <td>$${foodPrice}</td>
+                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+            `;
+
+            table.appendChild(newRow);
+            closeModal();
+
+            document.getElementById('foodName').value = '';
+            document.getElementById('foodImage').value = '';
+            document.getElementById('foodPrice').value = '';
+        }
+    </script>
+</body>
+</html>

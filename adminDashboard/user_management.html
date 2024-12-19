@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            padding: 20px;
+            margin-right: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+
+        .sidebar .spacer {
+            height: 200px;
+        }
+
+        .sidebar .logout {
+            color: red;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 20px;
+            
+        }
+
+        .add-button {
+            background-color: #f1c40f;
+            color: white;
+            border: none;
+            padding: 15px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+        }
+
+        .add-button:hover {
+            background-color: #d4ac0d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #f4f4f4;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+       
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        th:hover {
+            background-color: #eaeaea;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        select {
+            padding: 6px;
+            border-radius: 4px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 8px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .modal-content button {
+            padding: 8px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        .sidebar-title {
+            color: goldenrod;
+            font-family: 'Lavishly Yours', cursive;  /* Apply the Lavishly Yours font */
+            font-size: 2.5em;  /* Adjust the size as needed */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h1 class="sidebar-title">TTT</h1>
+        <a href="user_management.html">Users</a>
+        <a href="food_management.html">Items</a>
+        <a href="order_tracking.html">Order</a>
+        <a href="#">Message</a>
+        <div class="spacer"></div>
+        <a href="#" class="settings">Setting</a>
+        <a href="#" class="logout">Logout</a>
+    </div>
+
+    <div class="dashboard">
+        <h1>User Management</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Avatar</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><img class="avatar" src="https://via.placeholder.com/40" alt="Avatar"></td>
+                    <td>John Doe</td>
+                    <td>
+                        <select>
+                            <option>Admin</option>
+                            <option>Customer</option>
+                        </select>
+                    </td>
+                    <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="add-button" onclick="openModal()">Add New User</button>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Add New User</h3>
+            <input type="text" id="userName" placeholder="Enter Name">
+            <input type="text" id="userAvatar" placeholder="Enter Avatar URL">
+            <button onclick="addUser()">Add User</button>
+        </div>
+    </div>
+
+    <script>
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+        }
+
+        function openModal() {
+            document.getElementById('addUserModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+        }
+
+        function addUser() {
+            const name = document.getElementById('userName').value;
+            const avatar = document.getElementById('userAvatar').value;
+            const table = document.querySelector('table tbody');
+            const rowCount = table.rows.length + 1;
+
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                <td><img class="avatar" src="${avatar}" alt="Avatar"></td>
+                <td>${name}</td>
+                <td>
+                    <select>
+                        <option>Admin</option>
+                        <option>Customer</option>
+                    </select>
+                </td>
+                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+            `;
+
+            table.appendChild(newRow);
+            closeModal();
+        }
+    </script>
+</body>
+</html>

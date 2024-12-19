@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Order Tracking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            padding: 20px;
+            margin-right: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+
+        .sidebar .spacer {
+            height: 200px;
+        }
+
+        .sidebar .logout {
+            color: red;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f1c40f;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        select {
+            padding: 6px;
+            border-radius: 4px;
+        }
+        .sidebar-title {
+            color: goldenrod;
+            font-family: 'Lavishly Yours', cursive;  /* Apply the Lavishly Yours font */
+            font-size: 2.5em;  /* Adjust the size as needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1 class="sidebar-title">TTT</h1>
+        <a href="user_management.html">Users</a>
+        <a href="food_management.html">Items</a>
+        <a href="order_tracking.html">Order</a>
+        <a href="#">Message</a>
+        <div class="spacer"></div>
+        <a href="#" class="settings">Setting</a>
+        <a href="#" class="logout">Logout</a>
+    </div>
+
+    <div class="dashboard">
+        <h1>Food Order Tracking</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Foods and Quantity</th>
+                    <th>Total Price</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="orderTable">
+                <!-- Dynamic Rows Will Be Inserted Here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Sample JSON data for orders
+        const orders = [
+            {
+                orderId: "ORD001",
+                user: "John Doe",
+                foods: [
+                    { name: "Burger", quantity: 2 },
+                    { name: "Fries", quantity: 1 }
+                ],
+                totalPrice: 15.99,
+                date: "2024-12-19",
+                status: "Not paid"
+            },
+            {
+                orderId: "ORD002",
+                user: "Jane Smith",
+                foods: [
+                    { name: "Pizza", quantity: 1 },
+                    { name: "Soda", quantity: 2 }
+                ],
+                totalPrice: 20.50,
+                date: "2024-12-18",
+                status: "Cooking"
+            },
+            {
+                orderId: "ORD003",
+                user: "Emily White",
+                foods: [
+                    { name: "Pasta", quantity: 1 },
+                    { name: "Garlic Bread", quantity: 1 }
+                ],
+                totalPrice: 18.75,
+                date: "2024-12-17",
+                status: "Delivered"
+            }
+        ];
+
+        // Function to render orders in the table
+        function renderOrders() {
+            const tableBody = document.getElementById("orderTable");
+
+            orders.forEach(order => {
+                const row = document.createElement("tr");
+
+                // Order ID
+                const orderIdCell = document.createElement("td");
+                orderIdCell.textContent = order.orderId;
+                row.appendChild(orderIdCell);
+
+                // User
+                const userCell = document.createElement("td");
+                userCell.textContent = order.user;
+                row.appendChild(userCell);
+
+                // Foods and Quantity
+                const foodsCell = document.createElement("td");
+                foodsCell.innerHTML = order.foods.map(food => `${food.name} (x${food.quantity})`).join(", ");
+                row.appendChild(foodsCell);
+
+                // Total Price
+                const priceCell = document.createElement("td");
+                priceCell.textContent = `$${order.totalPrice.toFixed(2)}`;
+                row.appendChild(priceCell);
+
+                // Date
+                const dateCell = document.createElement("td");
+                dateCell.textContent = order.date;
+                row.appendChild(dateCell);
+
+                // Status
+                const statusCell = document.createElement("td");
+                const statusSelect = document.createElement("select");
+                ["Not paid", "Cooking", "Delivered"].forEach(status => {
+                    const option = document.createElement("option");
+                    option.value = status;
+                    option.textContent = status;
+                    if (order.status === status) {
+                        option.selected = true;
+                    }
+                    statusSelect.appendChild(option);
+                });
+                statusCell.appendChild(statusSelect);
+                row.appendChild(statusCell);
+
+                // Append row to table
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Call the render function on page load
+        renderOrders();
+    </script>
+</body>
+</html>
