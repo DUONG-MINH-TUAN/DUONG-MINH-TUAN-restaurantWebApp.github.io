@@ -429,8 +429,8 @@ body.nav-active { overflow: hidden; }
 
 .img-holder {
   aspect-ratio: var(--width) / var(--height);
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 200200px;
   overflow: hidden;
   background-color: var(--eerie-black-4);
 }
