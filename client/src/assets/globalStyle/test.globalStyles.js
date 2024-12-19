@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
 .logo{
@@ -27,7 +27,7 @@ body {
 
 .page-container {
   display: flex;
-  height: 89vh;
+  height: 90vh;
   background-color: #f8f9fa;
   flex-direction: row;
 }
@@ -113,6 +113,31 @@ body {
   background-color:#1E242A;
 }
 
+/* New Buttons Container */
+.new-buttons-container {
+  display: flex;
+  justify-content: space-around; /* Space between buttons */
+  margin-top: 10px; /* Add spacing from above content */
+  padding: 10px 0;
+  border-top: 1px solid #ddd; /* Optional separator line */
+}
+
+/* New Buttons */
+.new-button {
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.new-button.selected {
+  background-color: yellow;
+  color: black;
+}
+
 .product-card {
   display: flex;
   height: 150px;
@@ -188,6 +213,19 @@ border-right: 1px solid white;
   background-color: #1E242A;
   padding: 20px;
   border-left: 1px solid #ddd;
+  display: flex;
+  // width: 100%; /* Full width */
+  height: 90vh; /* Full viewport height */
+}
+
+.side-container.right-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.temp{
+display: flex;
+    flex-direction: column;
 }
 
 .order-header {
@@ -206,15 +244,19 @@ border-right: 1px solid white;
 }
 
 .order-summary {
-  margin-top: 20px;
+  // margin-top: -77px;
   border-top: 1px solid #ddd;
-  padding-top: 20px;
+  // padding-top: 20px;
+  margin-top: 20px;
 }
 
 .order-actions {
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
+}
+  .order-actions button {
+  width: 48%; /* Ensure buttons fit comfortably within the row */
 }
 
 /* Buttons */
@@ -244,17 +286,23 @@ border-right: 1px solid white;
   background-color: darkgreen;
 }
 
+.detail-checkout{
+    display: flex;
+    flex-direction: column;
+// flex: 4;
+}
 
 .selected-products {
 
-  margin-top: 20px;
-  padding: 20px;
+  // margin-top: 20px;
+  // padding: 20px;
   border-color: 2px solid #BEA47A;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: 350px; /* Fixed height to fit two items vertically */
+  height: 18rem; /* Fixed height to fit two items vertically */
   overflow-y: auto; /* Enable vertical scrolling if items exceed two */
   background-color: #1E242A;
+  // flex: 6;
   // width: 350px;
 }
 

@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import React from "react";
@@ -7,12 +6,15 @@ import GlobalStyle from "../assets/globalStyle/test.globalStyles";
 import { useAuth } from "../context/AuthContext";
 const Cart = () => {
   const navigate = useNavigate();
+  
   const {
     cart,
     setCart,
     selectedProducts,
     setSelectedProducts,
     getDishesWithCategory,
+    selectedNewButton,
+    setSelectedNewButton
   } = useAuth();
   // State for saving data cache
   const [categoryDataCache, setCategoryDataCache] = useState(
@@ -21,7 +23,12 @@ const Cart = () => {
   const [currentCategory, setCurrentCategory] = useState(
     () => sessionStorage.getItem("currentCategory") || 1 // take the session, if not, the default value is 1
   );
-  // load data from database 
+
+  const handleNewButtonClick = (buttonId) => {
+    setSelectedNewButton(buttonId);
+  };
+
+  // load data from database
   const fetchCategoryData = async (categoryId) => {
     if (categoryDataCache[categoryId]) {
       // if the data is exist in cache, setCart by that data cache
@@ -48,54 +55,49 @@ const Cart = () => {
 
   // hanle category switching
   const handleCategoryClick = (categoryId) => {
-    setCurrentCategory(categoryId); 
-    sessionStorage.setItem("currentCategory", categoryId); 
-    fetchCategoryData(categoryId); 
+    setCurrentCategory(categoryId);
+    sessionStorage.setItem("currentCategory", categoryId);
+    fetchCategoryData(categoryId);
   };
 
   // Handle selecting or deselecting a product
   const updateSelectedProducts = (productId, delta) => {
     setSelectedProducts((prev) => {
-     
       let updatedProducts = [...prev];
-  
 
       const index = updatedProducts.findIndex((item) => item.ID === productId);
-  
+
       if (index !== -1) {
-       
         const updatedProduct = { ...updatedProducts[index] };
         updatedProduct.quantity = Math.max(0, updatedProduct.quantity + delta);
-  
+
         if (updatedProduct.quantity === 0) {
-         
-          updatedProducts = updatedProducts.filter((item) => item.ID !== productId);
+          updatedProducts = updatedProducts.filter(
+            (item) => item.ID !== productId
+          );
         } else {
-          
           updatedProducts[index] = updatedProduct;
         }
       } else if (delta > 0) {
-      
         const productToAdd = cart.find((item) => item.ID === productId);
         if (productToAdd) {
           updatedProducts.push({ ...productToAdd, quantity: delta });
         }
       }
-  
+
       return updatedProducts;
     });
   };
-  
+
   // Load the data when first going to the page (Starter)
   useEffect(() => {
-    fetchCategoryData(currentCategory); 
+    fetchCategoryData(currentCategory);
   }, []);
 
   //auto save cart into session when the cart is changing
   useEffect(() => {
     if (cart.length > 0) {
       sessionStorage.setItem("cart", JSON.stringify(cart));
-     
     }
   }, [cart]);
 
@@ -116,33 +118,7 @@ const Cart = () => {
     };
     reloadTakeDishesSession();
   }, []);
-  // take selected products when reloading
-  useEffect(() => {
-    const reloadTakeDishesSession = () => {
-      const tempCart = sessionStorage.getItem("selectedProducts");
-      const parseCart = JSON.parse(tempCart);
-      if (parseCart) {
-        try {
-          if (JSON.stringify(parseCart) !== JSON.stringify(selectedProducts)) {
-            setCart(parseCart);
-          }
-        } catch (error) {
-          console.log("Error in selectedProduct UI in parse cart: ", error);
-        }
-      }
-    };
-    reloadTakeDishesSession();
-  }, []);
 
-//save selectedProducts into the session
-  useEffect(()=>{
-    if(selectedProducts.length > 0){
-        sessionStorage.setItem('selectedProducts',JSON.stringify(selectedProducts));
-        console.log("Values of cart in session in auth context: ", sessionStorage.getItem('selectedProducts'));
-    } 
-  },[selectedProducts])
-
- 
   // get image path
   const getImagePath = (imageName) => {
     return require(`../assets/img/${imageName}`);
@@ -219,10 +195,8 @@ const Cart = () => {
                       -
                     </button>
                     <span className="quantity-value">
-                      {
-                        selectedProducts.find((item) => item.ID === product.ID)
-                          ?.quantity || 0
-                      }
+                      {selectedProducts.find((item) => item.ID === product.ID)
+                        ?.quantity || 0}
                     </span>
                     <button
                       onClick={() => updateSelectedProducts(product.ID, 1)}
@@ -240,60 +214,93 @@ const Cart = () => {
         {/* Right container */}
         <div className="side-container right-container">
           <h3 className="order-header">ORDER #</h3>
+            <div className="temp">
 
           {/* Selected Products Section */}
           <div className="selected-products">
             <div className="selected-products-container">
-            {selectedProducts.map((product) => (
-                  <div key={product.ID} className="selected-product-card">
-                    <img
-                      src={getImagePath(product.img_url)}
-                      alt={product.Name}
-                      className="selected-product-image"
+              {selectedProducts.map((product) => (
+                <div key={product.ID} className="selected-product-card">
+                  <img
+                    src={getImagePath(product.img_url)}
+                    alt={product.Name}
+                    className="selected-product-image"
                     />
-                    <div className="selected-product-info">
-                      <div>
-                        <h3>{product.Name}</h3>
-                        <p>${product.price * product.quantity}</p>
-                      </div>
-                      <div>
-                        <h3>Quantity:</h3>
-                        <p>{product.quantity}</p>
-                      </div>
+                  <div className="selected-product-info">
+                    <div>
+                      <h3>{product.Name}</h3>
+                      <p>${product.price * product.quantity}</p>
+                    </div>
+                    <div>
+                      <h3>Quantity:</h3>
+                      <p>{product.quantity}</p>
                     </div>
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
           </div>
+          <div className="detail-checkout">
 
-          <div className="order-summary">
-            <p>
-              Subtotal: $
-              {selectedProducts.reduce((sum, item) => sum + item.price * item.quantity, 0)}
-            </p>
-            <p>
-              Service Charge 10%: $
-              {(
-                selectedProducts.reduce(
+            <div className="order-summary">
+              <p>
+                Subtotal: $
+                {selectedProducts.reduce(
                   (sum, item) => sum + item.price * item.quantity,
                   0
-                ) * 0.1
-              ).toFixed(2)}
-            </p>
-            <p>
-              Total: $
-              {(
-                selectedProducts.reduce(
-                  (sum, item) => sum + item.price * item.quantity,
-                  0
-                ) * 1.1
-              ).toFixed(2)}
-            </p>
-          </div>
-          <div className="order-actions">
-            <button className="cancel-order">Cancel Order</button>
-            <button className="send-order">Send Order</button>
-          </div>
+                )}
+              </p>
+              <p>
+                Service Charge 10%: $
+                {(
+                  selectedProducts.reduce(
+                    (sum, item) => sum + item.price * item.quantity,
+                    0
+                  ) * 0.1
+                ).toFixed(2)}
+              </p>
+              <p>
+                Total: $
+                {(
+                  selectedProducts.reduce(
+                    (sum, item) => sum + item.price * item.quantity,
+                    0
+                  ) * 1.1
+                ).toFixed(2)}
+              </p>
+            </div>
+            {/* New Buttons */}
+            <div className="new-buttons-container">
+              <button
+                className={`new-button ${
+                  selectedNewButton === "cash" ? "selected" : ""
+                }`}
+                onClick={() => handleNewButtonClick("cash")}
+                >
+                Cash
+              </button>
+              <button
+                className={`new-button ${
+                  selectedNewButton === "QR" ? "selected" : ""
+                }`}
+                onClick={() => handleNewButtonClick("QR")}
+                >
+                QR
+              </button>
+            </div>
+            <div className="order-actions">
+              <button className="cancel-order">Cancel Order</button>
+              <button
+                className="send-order"
+                onClick={() => navigate("/checkout")}
+                >
+                Send Order
+              </button>
+            </div>
+          </div> 
+          {/* detail-checkout */}
+        </div>
+        {/*  */}
         </div>
       </div>
     </section>

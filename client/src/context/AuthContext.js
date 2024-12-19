@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [promoteAdminError, setPromoteAdminError] = useState(null);
   const [selectedProducts,setSelectedProducts] = useState([]);
-
+  const [selectedNewButton, setSelectedNewButton] = useState(null);
   // Used for promote-to-admin
   const [users, setUsers] = useState({
     userList: [],
@@ -296,9 +296,33 @@ export const AuthProvider = ({ children }) => {
     console.log("Error in getting dishes by category infor in auth context: ", error.message);
 }
  }
-//   useEffect(() => {
-//     console.log("Users state updated: ", users);
-//   }, [users]);
+
+//save selectedProducts into the session
+useEffect(()=>{
+  if(selectedProducts.length > 0){
+      sessionStorage.setItem('selectedProducts',JSON.stringify(selectedProducts));
+      console.log("Values of cart in session in auth context: ", sessionStorage.getItem('selectedProducts'));
+  } 
+},[selectedProducts])
+
+// take selected products when reloading
+useEffect(() => {
+  const reloadTakeProductsSession = () => {
+    const tempCart = sessionStorage.getItem("selectedProducts");
+    const parseCart = JSON.parse(tempCart);
+    if (parseCart) {
+      try {
+        if (JSON.stringify(parseCart) !== JSON.stringify(selectedProducts)) {
+          setCart(parseCart);
+        }
+      } catch (error) {
+        console.log("Error in selectedProduct UI in parse cart: ", error);
+      }
+    }
+  };
+  reloadTakeProductsSession();
+}, []);
+
 
   // SERVER
   // server checker
@@ -548,6 +572,8 @@ export const AuthProvider = ({ children }) => {
         selectedProducts,
         setSelectedProducts,
         getDishesWithCategory,
+        selectedNewButton,
+        setSelectedNewButton,
       }}
     >
       {children}
