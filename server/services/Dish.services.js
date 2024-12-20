@@ -1,4 +1,4 @@
-const { getAllDishes,getDishesByCategory, deleteDishes,createDish} = require("../Models/Dish.model") ;
+const { getAllDishes,getDishesByCategory, deleteDishes,createDish,findDishByIds} = require("../Models/Dish.model") ;
 const jwt =require('jsonwebtoken');
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -118,3 +118,27 @@ exports.addDish = async(req,res) => {
         return res.status(500).json({ message: 'An error occurred while creating new dish in service.' });
       }
 }
+
+
+exports.findDishesArrayByIds = async(req,res) => {
+  try {
+    const orderIds = req.body;
+    if(!orderIds) {
+      console.log("There is no order ids input in dish service");
+      return res.status(200).json({ 
+        success: false, 
+        message: "There is no order ids input in dish service"});
+    
+    }
+    const dishes = await findDishByIds(orderIds);
+    if(!dishes){
+      console.log("There is no dishes response in dish service in findDishesArrayByIds");
+      return res.status(200).json({ 
+        success: false, 
+        message: "There is no dishes response in dish service in findDishesArrayByIds"});
+    }
+    return res.status(200).json({dishes: dishes, success: true, message: "Find dishes by ids successfully!!!"});
+  } catch (error) {
+      console.log("Error in find dishes by ids in service: ", error);
+  }
+} 

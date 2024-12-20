@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { findUserByEmail, createUser,deleteUser,getAllUser, } = require('../Models/User.model');
+const { findUserByEmail, createUser,deleteUser,getAllUser, findUsersByIds} = require('../Models/User.model');
 const {findAdminById} = require('../Models/Admin.model');
 const {generateAccessToken,generateRefreshToken} = require('./Auth.services');
 const DOMPurify = require('dompurify');
@@ -279,5 +279,59 @@ exports.getAllUsers = async(req,res) => {
         return res.status(500).json({ message: 'An error occurred while getting users in service.' });
     }
     
+
+}
+
+
+exports.getOrCreateGuestId = (req, res) => {
+  let guestId = req.cookies.guestId;
+  if (!guestId) {
+    guestId = `Guest_${Date.now()}`; // Tạo ID dựa trên thời gian
+    res.cookie("guestId", guestId, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // Lưu cookie 1 ngày
+  }
+  return guestId;
+};
+
+
+exports.getUsersByIds = async(req,res) => {
+  try {
+    console.log("findUsersByIds called with:", userIds);
+    const userIds = req.body;
+    const authHeader = req.headers["authorization"];
+if(!authHeader){
+  console.log("Error in get all users in user.services: there is no auth header");
+
+}
+const accessToken = authHeader && authHeader.split(" ")[1];
+if (!accessToken) {
+  console.log("Error in get all users in user.services: there is no access token");
+  return res.status(401).json({message: "No token provided"});
+}
+
+// Sử dụng async/await để verify token
+const user = await new Promise((resolve, reject) => {
+  jwt.verify(accessToken, SECRET_KEY, (err, decodedUser) => {
+    if (err) {
+      reject({ status: 403, message: "Invalid access token" });
+    } else {
+      resolve(decodedUser);
+    }
+  });
+});
+
+const payload = jwt.decode(accessToken);
+// check role
+if (!payload.role || payload.role!=="admin"||payload.role!=="chef"){
+  return res.status(403).json({message: "Not authorized as admin or chef",success:false});
+}
+const users = await findUsersByIds(userIds);
+if (!users){
+    return res.status(404).json({message: "Users not found",success:false});
+}
+return res.status(200).json({users: users,message: "Get all users by ids successfully!!!",success:true});
+} catch (error) {
+    console.error('Error getting users by ids in service:', error);
+    return res.status(500).json({ message: 'An error occurred while getting users by ids in service.' });
+}
 
 }

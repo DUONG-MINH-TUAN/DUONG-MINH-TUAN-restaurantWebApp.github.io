@@ -20,7 +20,8 @@ export default function ManageUser() {
             getAllAdminIds,
             setAdmins,
             logout,
-            getAllFoods
+            getAllFoods,
+            convertToOrders
           } = useAuth();
     
 
@@ -144,6 +145,12 @@ export default function ManageUser() {
     useEffect(()=>{
       console.log("Admins:",admins);
     },[admins])
+
+    const handleOrderManager = useCallback(async(e) => {
+      e.preventDefault();
+      await convertToOrders();
+      navigate("/order-management");
+  })
   return (
     <div className="row">
       <GlobalStyle />
@@ -153,7 +160,7 @@ export default function ManageUser() {
           <div>
             <h1 className="sidebar-title" onClick={()=>navigate("/")}>TTT</h1>
             <a onClick={(e)=>handleFoodManager(e)}>Items</a>
-            <a href="#">Order</a>
+            <a onClick={(e) => handleOrderManager(e)}>Order</a>
           </div>
           {/* <div className="spacer"></div> */}
           <div>

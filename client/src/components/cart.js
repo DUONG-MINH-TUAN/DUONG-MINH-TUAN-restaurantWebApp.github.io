@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { ToastContainer,toast } from 'react-toastify';
 import React from "react";
 // import './App.css'; // CSS file for styles
 import GlobalStyle from "../assets/globalStyle/test.globalStyles";
 import { useAuth } from "../context/AuthContext";
+
 const Cart = () => {
   const navigate = useNavigate();
   
@@ -14,7 +16,8 @@ const Cart = () => {
     setSelectedProducts,
     getDishesWithCategory,
     selectedNewButton,
-    setSelectedNewButton
+    setSelectedNewButton,
+    orderFoods,
   } = useAuth();
   // State for saving data cache
   const [categoryDataCache, setCategoryDataCache] = useState(
@@ -52,6 +55,23 @@ const Cart = () => {
       }
     }
   };
+//   // take selected products when reloading
+// useEffect(() => {
+//   const reloadTakeProductsSession = () => {
+//     const tempCart = sessionStorage.getItem("selectedProducts");
+//     const parseCart = JSON.parse(tempCart);
+//     if (parseCart) {
+//       try {
+//         if (JSON.stringify(parseCart) !== JSON.stringify(selectedProducts)) {
+//           setCart(parseCart);
+//         }
+//       } catch (error) {
+//         console.log("Error in selectedProduct UI in parse cart: ", error);
+//       }
+//     }
+//   };
+//   reloadTakeProductsSession();
+// }, []);
 
   // hanle category switching
   const handleCategoryClick = (categoryId) => {
@@ -124,9 +144,31 @@ const Cart = () => {
     return require(`../assets/img/${imageName}`);
   };
 
+  const handleSendOrder = async(e)=> {
+    e.preventDefault();
+    if(!selectedProducts){
+      toast.error("There is no selected product");
+      return;
+    }
+    await orderFoods();
+    navigate("/checkout");
+  }
+
+  
+  const handleCancleOrder = (e)=> {
+    e.preventDefault();
+    setSelectedProducts([]);
+  }
+
+  useEffect(()=>{
+    if(!selectedProducts){
+      toast.error("There is no selected product");
+    }
+  },[selectedProducts])
   return (
     <section>
       <GlobalStyle />
+      <ToastContainer/>
       {/* Header*/}
       <div className="header-container">
         <header className="header">
@@ -289,10 +331,10 @@ const Cart = () => {
               </button>
             </div>
             <div className="order-actions">
-              <button className="cancel-order">Cancel Order</button>
+              <button className="cancel-order" onClick={(e)=> handleCancleOrder(e)}>Cancel Order</button>
               <button
                 className="send-order"
-                onClick={() => navigate("/checkout")}
+                onClick={(e) => handleSendOrder(e)}
                 >
                 Send Order
               </button>

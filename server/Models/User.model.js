@@ -57,6 +57,42 @@ const getAllUser = async() => {
 }
 
 
+const findUsersByIds = async(userIds) => {
+    try {
+        if (!userIds || userIds.length === 0) {
+            console.warn("No user IDs provided.");
+            return []; // Return an empty array if no IDs are provided
+        }
+
+        // Extract 'User_ID' values and filter out null values
+        const idArray = userIds
+            .map((order) => order.User_ID)
+            .filter((id) => id !== null);
+        console.log("IdArray", idArray);
+        if (!idArray || idArray.length === 0) {
+            console.warn("No valid user IDs after filtering.");
+            return []; // Return an empty array if no valid IDs remain
+        }
+        const users = await prisma.userinfor.findMany({
+            where: {
+                id: {
+                    in: idArray,
+                }
+            },
+        });
+
+        console.log("found users by ids: ",users);
+        return users;
+    } catch (error) {
+        
+        console.error("Error in finding users by ids: ", error);
+        throw error;
+    } finally {
+        // Đảm bảo đóng kết nối Prisma Client sau khi sử dụng
+        await prisma.$disconnect();
+    }
+}
+
 async function createUser(email,password) {
     try {
         // split the username from the email
@@ -103,4 +139,4 @@ const deleteUser = async (userIds) => {
 
 
 
-module.exports = {findUserByEmail,createUser,getAllUser,deleteUser,findUserById,};
+module.exports = {findUserByEmail,createUser,getAllUser,deleteUser,findUserById,findUsersByIds};

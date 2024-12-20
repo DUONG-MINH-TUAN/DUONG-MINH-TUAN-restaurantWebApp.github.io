@@ -13,7 +13,7 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 // used for reloading token
-const RELOAD_SECOND = 10; //second
+const RELOAD_SECOND = 5; //second
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -51,6 +51,9 @@ export const AuthProvider = ({ children }) => {
   });
   const [admins, setAdmins] = useState([]);
 
+
+  const [orders,setOrders] = useState([]);
+
   // TOKEN
   // decode access token and take the payload
   const decodeAccessToken = useCallback((accessToken) => {
@@ -65,6 +68,8 @@ export const AuthProvider = ({ children }) => {
       return;
     }
   }, []);
+
+
   // check expiration for token
   const checkExpiration = useCallback((token) => {
     if (!token) {
@@ -129,6 +134,11 @@ export const AuthProvider = ({ children }) => {
     // Clean up khi component unmount
     return () => clearInterval(intervalId);
   }, [accessToken]);
+
+
+
+
+
 
   // ADMIN
   // Promote admin but get All users and verify
@@ -334,16 +344,117 @@ export const AuthProvider = ({ children }) => {
     console.log("There is error in deleting dishes in auth context:", error);
   }
 };
+  const orderFoods = async() => {
+    try {
+      console.log("Selected products: ",selectedProducts);
+      const response = await axios.post(`${baseUrl}/send-to-cart`,selectedProducts);
+      if(!response) {
+        console.log("There is no response from sending to cart in auth context");
+        return;
+
+      }
+      return response;
+    } catch (error) {
+      console.log("Error in sending cart in auth context: ",error);
+      return {message: error.message};
+    }
+  }
 
 
- 
+  const getAllOrders = useCallback(async() => {
+    try {
+      const response = await instance.get(`${baseUrl}/protected/get-all-orders`);
+      if (!response.data.success) {
+        console.log(response.data.message);
+        return;
+      }
+      return response.data.orders;
+    } catch (error) {
+      console.log(
+        "Error in getting all orders in auth context: ",
+        error.message
+      );
+    }
+  },[])
 
+
+  const convertToOrders = async() => {
+    try {
+      //get all orders
+      const orders = await getAllOrders();
+      let temp = [];
+      orders.map((order) => {
+        temp.push({
+          id: order.ID,
+        })
+      }) 
+
+      let temp2 = [];
+      orders.map((order) => {
+        temp2.push({
+          id: order.User_ID,
+        })
+      }) 
+
+      console.log("users_id_array:",temp2);
+      const idArray = temp2
+  .map((order) => order.id) // Extract the `id` field
+  .filter((id) => id !== null && id !== undefined && id !== ""); // Remove invalid entries
+
+
+      console.log("idArray",idArray);
+      let users= [];
+      if(idArray && idArray.length > 0){
+        //get all users with the same ids in orders 
+        users = await findUsersByIds(idArray);
+      }
+      // find all dishes by ids
+      const dishes = await findDishByIds(temp);
+      // Kết hợp giá trị `Name` từ `dishes` vào `orders`
+      orders.forEach((order) => {
+        const dish = dishes.find((d) => d.ID === order.ID); // Tìm dish có ID khớp với ID trong order
+        order.name = dish ? dish.Name : null; // Nếu tìm thấy dish thì gán Name, nếu không thì gán null
+      });
+      console.log("first parse orders: ",orders);
+      if(users && users.length > 0){
+      orders.forEach((order) => {
+        const user = users.find((d) => d.id === order.User_ID); // Tìm dish có ID khớp với User_ID trong order
+        order.username = user ? user.name : null; // Nếu tìm thấy dish thì gán Name, nếu không thì gán null
+      });
+    }
+    console.log("second parse orders",orders);
+      // add name to orders
+      setOrders(orders);
+      
+    } catch (error) {
+       console.log("Error in converting to orders", error);
+    }
+
+  }
+
+  const findDishByIds = async(orderIds) =>{
+    try {
+      const response = await instance.post(`${baseUrl}/find-dishes-by-ids`,orderIds);
+      if(!response){
+        console.log("There is no response from find dishes by ids in auth context");
+        return;
+      }
+      if(!response.data.success){
+        console.log(response.data.message);
+        return;
+      }
+      return response.data.dishes;
+    } catch (error) {
+      console.log("Error in find dishes by ids in auth context", error);
+
+    }
+  }
 //save selectedProducts into the session
 useEffect(()=>{
-  if(selectedProducts.length > 0){
+  // if(selectedProducts.length > 0){
       sessionStorage.setItem('selectedProducts',JSON.stringify(selectedProducts));
       console.log("Values of cart in session in auth context: ", sessionStorage.getItem('selectedProducts'));
-  } 
+  // } 
 },[selectedProducts])
 
 // take selected products when reloading
@@ -475,7 +586,7 @@ useEffect(() => {
   };
 
   const logout = useCallback(async () => {
-    const accessToken = localStorage.getItem("accessToken");
+    // const accessToken = localStorage.getItem("accessToken");
     // if (!accessToken) {
     //   setAccessToken(null);
     //   setLoginError(null);
@@ -573,7 +684,25 @@ useEffect(() => {
       );
     }
   }, []);
+  
+  const findUsersByIds = async(userIds) =>{
+    try {
+      const response = await instance.post(`${baseUrl}/protected/get-users-by-ids`,userIds);
+      if(!response){
+        console.log("There is no response from find users by ids in auth context");
+        return;
+      }
+      if(!response.data.success){
+        console.log(response.data.message);
+        return;
+      }
+      return response.data.users;
+    } catch (error) {
+      console.log("Error in find users by ids in auth context", error.message);
 
+    }
+  }
+  
   return (
     <AuthContext.Provider
       value={{
@@ -622,7 +751,10 @@ useEffect(() => {
         getAllFoods,
         deleteDishes,
         insertDish,
-
+        orderFoods,
+        convertToOrders,
+        orders,
+        setOrders,
       }}
     >
       {children}

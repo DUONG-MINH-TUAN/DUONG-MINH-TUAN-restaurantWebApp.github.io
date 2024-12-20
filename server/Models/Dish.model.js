@@ -80,3 +80,27 @@ exports.createDish = async(dish) => {
         await prisma.$disconnect();
     }
 }
+
+
+exports.findDishByIds = async(orderIds) => {
+    try {
+        const idArray = orderIds.map((order) => order.id); // Extract 'id' values
+        const dishes = await prisma.disk.findMany({
+            where: {
+                ID: {
+                    in: idArray,
+                }
+            },
+        });
+
+        console.log("found dishes: ",dishes);
+        return dishes;
+    } catch (error) {
+        
+        console.error("Error in finding dishes by id: ", error);
+        throw error;
+    } finally {
+        // Đảm bảo đóng kết nối Prisma Client sau khi sử dụng
+        await prisma.$disconnect();
+    }
+}

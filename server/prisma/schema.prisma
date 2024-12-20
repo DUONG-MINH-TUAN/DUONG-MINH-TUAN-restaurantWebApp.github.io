@@ -8,15 +8,25 @@ datasource db {
 }
 
 model cart {
-  ID        Int       @id @default(autoincrement())
-  Table_ID  Int
-  Disk_ID   Int
-  Quantity  Int
-  tableinfo tableinfo @relation(fields: [Table_ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "cart_ibfk_1")
-  disk      disk      @relation(fields: [Disk_ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "cart_ibfk_2")
+  ID       Int        @id @default(autoincrement())
+  User_ID  Int?
+  Guest_ID String?
+  Disk_ID  Int
+  Quantity Int
+  date     DateTime   @default(now()) // Thêm thuộc tính date với giá trị mặc định là now
+  Status   CartStatus @default(PENDING)
+  user     userinfor? @relation(fields: [User_ID], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_ibfk_1")
+  disk     disk       @relation(fields: [Disk_ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "cart_ibfk_2")
 
   @@index([Disk_ID], map: "Disk_ID")
-  @@index([Table_ID], map: "Table_ID")
+  @@index([User_ID], map: "User_ID")
+  @@index([Guest_ID], map: "Guest_ID") // Tạo chỉ mục cho Guest_ID
+}
+
+enum CartStatus {
+  PENDING // booking but no cooking
+  COOKING
+  COMPLETED
 }
 
 model category {
@@ -80,7 +90,6 @@ model tableinfo {
   StartAt DateTime? @db.DateTime(0)
   EndAt   DateTime? @db.DateTime(0)
   Total   Decimal?  @db.Decimal(10, 2)
-  cart    cart[]
 }
 
 model userinfor {
@@ -90,6 +99,7 @@ model userinfor {
   password String   @db.VarChar(100)
   admins   admins[]
   chef     chef[]
+  cart     cart[] // Quan hệ ngược với bảng cart
 }
 
 model admins {

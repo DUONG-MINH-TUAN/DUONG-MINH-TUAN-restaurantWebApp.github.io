@@ -7,15 +7,14 @@ import { useNavigate, useLocation} from "react-router-dom";
 import Login from "./components/login";
 import Home from "./components/home";
 import Signup from "./components/signup";
-
+import OrderTracking from "./components/orderTracking";
 import ManageUser from "./components/manageUser";
 import Checkout from "./components/checkout";
 import FoodManagement from "./components/foodManagement";
 import Cart from "./components/cart"
 import "./App.css";
-
 function App() {
-  const { user,accessToken, registerSuccess, setRegisterSuccess ,setUser} = useAuth();
+  const { user,accessToken, registerSuccess, setRegisterSuccess ,setUser,setAccessToken,logout} = useAuth();
   const location = useLocation(); // Get the current route path
   const navigate = useNavigate();
   useEffect(() => {
@@ -44,6 +43,34 @@ function App() {
       }
     }
   }, [location.pathname,accessToken]);
+  // useEffect(() => {
+  //   const checkAccessAndLogout = async () => {
+  //     // Allow access only on "/", "/login", or "/signUp"
+  //     if (location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/signUp") {
+  //       if (!accessToken) {
+  //         await logout(); // Logout the user
+  //         navigate('/login'); // Redirect to login
+  //       }
+  //     }
+  //   };
+  
+  //   checkAccessAndLogout(); // Call the async function
+  // }, [location.pathname, accessToken]);
+  
+  // useEffect(() => {
+  //   const handleStorageChange = () => {
+  //     setAccessToken(localStorage.getItem('accessToken'));
+  //   };
+  
+  //   // Lắng nghe sự kiện thay đổi trong localStorage
+  //   window.addEventListener('storage', handleStorageChange);
+  
+  //   return () => {
+  //     window.removeEventListener('storage', handleStorageChange);
+  //   };
+  // }, []);
+    
+  
   return (
     <Routes>
       
@@ -53,14 +80,14 @@ function App() {
       
       <Route path="/checkout" element={<Checkout/>} />
       {/* <Route path="/" element={<FoodManagement />} /> */}
-      
-      <Route path="/manage-user" element={< ManageUser/>} />
+      <Route path="/order-management" element={<OrderTracking/>} />
+      <Route path="/manage-user" element={accessToken ? < ManageUser/> : <Login/>} />
  
       <Route path="/login" element={accessToken ? <Home /> : <Login />} />
       {/* <Route path="/login" element={<Login/>} /> */}
       <Route path="/signUp" element={<Signup />} />
 
-      <Route path="/food-management" element={<FoodManagement />} />
+      <Route path="/food-management" element={accessToken ? < FoodManagement/> : <Login/>} />
     </Routes>
   );
 }

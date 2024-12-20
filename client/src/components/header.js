@@ -10,7 +10,8 @@ function Header(){
         setLoginError,
         setRegisterError,
         getAllAdminIds,
-        getAllFoods
+        getAllFoods,
+        convertToOrders
     } = useAuth();
     
     const navigate = useNavigate();
@@ -53,6 +54,13 @@ function Header(){
         navigate("/food-management");
         return;
     },[]);
+
+
+    const handleOrderManager = useCallback(async(e) => {
+        e.preventDefault();
+        await convertToOrders();
+        navigate("/order-management");
+    })
     return (
                 
         <header className="header" data-header>
@@ -134,6 +142,14 @@ function Header(){
                             </div>
 
                 </nav>
+
+                { user && (user.role == "admin") &&(
+                <a onClick={(e)=>handleOrderManager(e)} className="btn btn-secondary">
+                    <span className="text text-1">Order Management</span>
+
+                    <span className="text text-2" aria-hidden="true">Order Management</span>
+                </a>
+                )}
 
                 { user && (user.role == "admin") &&(
                 <a onClick={(e)=>handleFoodManager(e)} className="btn btn-secondary">
